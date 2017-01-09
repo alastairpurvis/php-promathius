@@ -3,7 +3,7 @@ Promathius Web Game [![Circle CI](https://circleci.com/gh/Shopify/Timber.svg?sty
 
 Promathius is a turn-based strategy game built on PHP and MySQL. It leverages the Smarty Template Framework for separation between the view and the controller, and also includes phpBB2 for its forum.
 
-Styling and customization is left up to you. Some base styles and helpers are included, but there is **no need to remove any code before you start**. Simply download and get designing.
+The front-end display and rules of the game are separated from the backend game engine in an organized "data" folder. These files can be modified with minimal programming experience for cuztomization and optimization. 
 
 Basic structure
 ---------------
