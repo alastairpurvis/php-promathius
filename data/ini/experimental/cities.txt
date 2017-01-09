@@ -1,0 +1,17 @@
+; Force sentence case (caps eah word)
+; Remove ! or / or any other wierd symbol
+; Remove ' or "
+; Remove numbers
+; Remove silly terms like XXX, PWN, N00B etc.
+; Remove Empire, Tribe, League, Clan
+; Remove random words like Food, Starvation, Own, Owned, You, Me
+
+[Cities]
+  UseCities = Yes ; If disabled, the user is allowed to pick a custom city name
+
+[Greek]
+  ;Major cities like Athens, Sparta, Corinth etc. are not included in order to avoid historical conflict
+  Cities = Barta, Thessavarica, Cosinos, Majovorum, 
+  2ndGenPrefix = New *
+  3rdGenPrefix = Na, Ma, 
+ 

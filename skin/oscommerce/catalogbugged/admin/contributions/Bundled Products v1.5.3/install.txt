@@ -1,0 +1,846 @@
+######################################################
+Bundled Products Install
+######################################################
+Bundles are groups of products. A bundle is defined by a master product that contains sub-products,
+the sub-products are regular stock items. A bundle may also contain other bundles, but those "sub-bundles" may not contain further bundles (yet).
+
+A master product (referred to as "bundle") is defined with an extra field in the products table, products_bundle. If this field is "yes" then the products_bundles table must contain data about this bundle. The products_bundles table defines which other products are in the bundle, and the numbers of each.
+
+A bundle can have any price, independent of the value of it's contents. The saving, if any, is displayed to the customer on the products_info.php page.
+
+When the bundle is sold, the stock of each subproduct is updated. The stock level of the bundle never changes, but to make sure that you can sell it, set the stock level to "1" when creating the bundle. The stock of the subproducts is not currently (1 Apr 04) checked before a sale, but this will be fixed in the next version/update.
+
+GriffithLea included some code intended to prevent overselling. For example, if a bundle contains 3 apples and 2 pears, you have 3 apples in stock, and a customer puts 1 of these bundles into the cart, plus an apple by itself, this code will mark the individual apple as being
+insufficiently stocked. The code tries to give priority to bundles when doing
+its insufficient-stock marking, i.e. it allows the bundle to sell before it
+allows the individual item(s) that make up the bundle to sell. Please PM me if
+you have questions or suggestions about this added feature.
+
+
+***NOTE: If you have a stock osCommerce install, upload the catalog directory to your server, preserving the directory structure. Otherwise, manually merge in the changes which can be found in the History section below. Work from the oldest change (the original) to the newest.
+
+
+***NOTE: IF you have Paypal IPN, and you want to just upload the files, you still need to apply a manual fix (see below) after the upload.
+
+
+***FILES CHANGED***
+catalog/checkout_confirmation.php
+catalog/checkout_process.php
+catalog/product_info.php
+catalog/shopping_cart.php
+catalog/includes/database_tables.php
+catalog/english/product_info.php
+catalog/includes/classes/shopping_cart.php
+catalog/includes/functions/general.php
+catalog/includes/languages/english.php
+catalog/includes/languages/english/product_info.php
+catalog/includes/languages/espanol/product_info.php
+catalog/includes/languages/german/product_info.php
+catalog/includes/modules/product_listing.php
+catalog/includes/modules/payment/paypal_standard.php(There are multiple versions of this contrib and some may be named slightly different and/or have slightly different paths.)
+
+catalog/admin/categories.php
+catalog/admin/includes/database_tables.php
+catalog/admin/includes/functions/general.php
+catalog/admin/includes/languages/english/categories.php
+
+
+***FILES ADDED***
+catalog/includes/languages/{insert your language(s) here}/images/button_out_of_stock.gif
+
+
+
+
+Support thread: http://forums.oscommerce.com/index.php?showtopic=313412
+
+######################################################
+STEP 1: Make a backup of your files and database.
+
+######################################################
+STEP 2: Apply the database changes found in the dbchanges.sql file, using phpmyadmin or similar.
+
+######################################################
+STEP 3: /catalog/includes/database_tables.php
+
+***ADD BEFORE FINAL ?>:
+
+// BOF Bundled Products
+  define('TABLE_PRODUCTS_BUNDLES', 'products_bundles');
+// EOF Bundled Products
+
+######################################################
+STEP 4: /catalog/admin/includes/database_tables.php
+***ADD BEFORE FINAL ?>:
+
+// BOF Bundled Products
+  define('TABLE_PRODUCTS_BUNDLES', 'products_bundles');
+// EOF Bundled Products
+######################################################
+STEP 5 :/catalog/admin/includes/languages/{insert your language(s)}/categories.php
+***ADD BEFORE FINAL ?>:
+
+// BOF Bundled Products
+define('TEXT_PRODUCTS_BUNDLE', 'Set Bundles:');
+// EOF Bundled Products
+
+#####################################################
+Step 6: /catalog/admin/categories.php
+
+***FIND:
+          $sql_data_array = array('products_quantity' => tep_db_prepare_input($HTTP_POST_VARS['products_quantity']),
+
+***OR***
+***osCommerce Online Merchant v2.2: FIND:
+          $sql_data_array = array('products_quantity' => (int)tep_db_prepare_input($HTTP_POST_VARS['products_quantity']),
+
+
+***ADD AFTER:
+                                  'products_bundle' => tep_db_prepare_input($HTTP_POST_VARS['products_bundle']),
+
+***FIND:
+            tep_db_perform(TABLE_PRODUCTS, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "'");
+          }
+
+
+***ADD AFTER:
+          // BOF Bundled Products
+          if ($HTTP_POST_VARS['products_bundle'] == "yes") {
+            tep_db_query("DELETE FROM products_bundles WHERE bundle_id = '" . $products_id . "'");
+            for ($i=0, $n=6; $i<$n; $i++) {
+              if (isset($HTTP_POST_VARS['subproduct_' . $i . '_qty']) && $HTTP_POST_VARS['subproduct_' . $i . '_qty'] > 0) {
+                tep_db_query("INSERT INTO products_bundles (bundle_id, subproduct_id, subproduct_qty) VALUES ('" . $products_id . "', '" . $HTTP_POST_VARS['subproduct_' . $i . '_id'] . "', '" . $HTTP_POST_VARS['subproduct_' . $i . '_qty'] . "')");
+              }
+            }
+          }
+          // EOF Bundled Products
+
+***FIND:
+    $parameters = array('products_name' => '', 
+
+***ADD AFTER:
+                        'products_bundle' => '',
+
+
+***FIND:
+    if (isset($HTTP_GET_VARS['pID']) && empty($HTTP_POST_VARS)) {
+      $product_query = tep_db_query("select pd.products_name, pd.products_description, pd.products_url, p.products_id, p.products_quantity, p.products_model, p.products_image, p.products_price, p.products_weight, p.products_date_added, p.products_last_modified, date_format(p.products_date_available, '%Y-%m-%d') as products_date_available, p.products_status, p.products_tax_class_id, p.manufacturers_id from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_id = '" . (int)$HTTP_GET_VARS['pID'] . "' and p.products_id = pd.products_id and pd.language_id = '" . (int)$languages_id . "'");
+
+
+***CHANGE TO:
+    if (isset($HTTP_GET_VARS['pID']) && empty($HTTP_POST_VARS)) {
+      // BOF Bundled Products added p.products_bundle
+      $product_query = tep_db_query("select pd.products_name, pd.products_description, pd.products_url, p.products_id, p.products_quantity, p.products_model, p.products_image, p.products_price, p.products_weight, p.products_date_added, p.products_last_modified, date_format(p.products_date_available, '%Y-%m-%d') as products_date_available, p.products_status, p.products_tax_class_id, p.manufacturers_id, p.products_bundle from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_id = '" . (int)$HTTP_GET_VARS['pID'] . "' and p.products_id = pd.products_id and pd.language_id = '" . (int)$languages_id . "'");
+      // EOF Bundled Products
+
+***FIND:
+      $products_description = $HTTP_POST_VARS['products_description'];
+      $products_url = $HTTP_POST_VARS['products_url'];
+    }
+
+
+***ADD AFTER:
+    // BOF Bundled Products
+    if (isset($pInfo->products_bundle) && $pInfo->products_bundle == "yes") {
+    // this product is a bundle so get contents data 
+      $bundle_query = tep_db_query("SELECT pb.subproduct_id, pb.subproduct_qty, pd.products_name FROM " . TABLE_PRODUCTS_DESCRIPTION . " pd INNER JOIN " . TABLE_PRODUCTS_BUNDLES . " pb ON pb.subproduct_id=pd.products_id WHERE pb.bundle_id = '" . $HTTP_GET_VARS['pID'] . "' and language_id = '" . (int)$languages_id . "'");
+      while ($bundle_contents = tep_db_fetch_array($bundle_query)) {
+        $bundle_array[] = array('id' => $bundle_contents['subproduct_id'],
+                                'qty' => $bundle_contents['subproduct_qty'],
+                                'name' => $bundle_contents['products_name']);
+      }
+    }
+    // EOF Bundled Products
+
+***FIND:
+              <tr> 
+                <td class="main"><?php echo TEXT_PRODUCTS_WEIGHT; ?></td>
+                <td class="main"><?php echo tep_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . tep_draw_input_field('products_weight', $pInfo->products_weight); ?></td>
+              </tr>
+
+
+***ADD AFTER:
+
+          <!-- BOF Bundled Products -->
+          <tr bgcolor="#EEEEEE">
+            <td class="main" valign="top">
+              <?php echo TEXT_PRODUCTS_BUNDLE; ?>
+            </td>
+            <td class="main" valign="top">
+              <table>
+                <tr>
+                  <td class="main" valign="top">
+                    <?php echo tep_draw_separator('pixel_trans.gif', '24', '15') . tep_draw_input_field('products_bundle', $pInfo->products_bundle) . '<br>("yes" or blank)'; ?>
+                      </td>
+                      <td class="main" valign="top">
+<script language="javascript"><!--
+function fillCodes() {
+  for (var n=0;n<6;n++) {
+    var this_subproduct_id = eval("document.new_product.subproduct_" + n + "_id")
+    var this_subproduct_name = eval("document.new_product.subproduct_" + n + "_name")
+    var this_subproduct_qty = eval("document.new_product.subproduct_" + n + "_qty")
+    if (this_subproduct_id.value == "") {
+      this_subproduct_id.value = document.new_product.subproduct_selector.value
+      this_subproduct_qty.value = "1"
+      var name = document.new_product.subproduct_selector[document.new_product.subproduct_selector.selectedIndex].text
+        this_subproduct_name.value = name
+        document.returnValue = true;
+        return true;
+    }
+  }
+}
+
+function clearSubproduct(n) {
+  var this_subproduct_id = eval("document.new_product.subproduct_" + n + "_id");
+  var this_subproduct_name = eval("document.new_product.subproduct_" + n + "_name");
+  var this_subproduct_qty = eval("document.new_product.subproduct_" + n + "_qty");
+  this_subproduct_id.value = "";
+  this_subproduct_name.value = "";
+  this_subproduct_qty.value = "";
+}
+            //--></script>
+<?php
+    for ($i=0, $n=6; $i<$n; $i++) {
+      echo "\n" . '<input type="text" size="30" name="subproduct_' . $i . '_name" value="' . $bundle_array[$i]['name'] . '">';
+      echo "\n" . '<input type="text" size="3" name="subproduct_' . $i . '_id" value="' . $bundle_array[$i]['id'] . '">';
+      echo "\n" . '<input type="text" size="2" name="subproduct_' . $i . '_qty" value="' . $bundle_array[$i]['qty'] . '">';
+      echo "\n" . '<a href="javascript:clearSubproduct(' . $i . ')">[x]</a><br>';
+    }
+    echo 'add : <select name="subproduct_selector" onChange="fillCodes()">';
+    echo '<option name="null" value="" SELECTED></option>';
+    $products = tep_db_query("select pd.products_name, p.products_id, p.products_model from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where pd.products_id = p.products_id and pd.language_id = '" . $languages_id . "' and p.products_id <> '" . $HTTP_GET_VARS['pID'] . "' order by p.products_model");
+
+    while($products_values = tep_db_fetch_array($products)) {
+      echo "\n" . '<option name="' . $products_values['products_model'] . '" value="' . $products_values['products_id'] . '">' . $products_values['products_model'] . ' - - - ' . $products_values['products_name'] . " (" . $products_values['products_id'] . ')</option>';
+    }
+    echo '</select>';
+?>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- EOF Bundled Products -->
+
+
+######################################################
+Step 7: catalog/product_info.php
+
+***FIND:
+    $product_info_query = tep_db_query("select p.products_id, pd.products_name, pd.products_description, p.products_model, p.products_quantity, p.products_image, pd.products_url, p.products_price, p.products_tax_class_id, p.products_date_added, p.products_date_available, p.manufacturers_id from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_status = '1' and p.products_id = '" . (int)$HTTP_GET_VARS['products_id'] . "' and pd.products_id = p.products_id and pd.language_id = '" . (int)$languages_id . "'");
+
+***CHANGE TO:
+
+    // BOF Bundled Products
+    $product_info_query = tep_db_query("select p.products_id, pd.products_name, pd.products_description, p.products_model, p.products_quantity, p.products_image, pd.products_url, p.products_price, p.products_tax_class_id, p.products_date_added, p.products_date_available, p.manufacturers_id, p.products_bundle from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_status = '1' and p.products_id = '" . (int)$HTTP_GET_VARS['products_id'] . "' and pd.products_id = p.products_id and pd.language_id = '" . (int)$languages_id . "'");
+    // EOF Bundled Products
+
+***FIND:
+          <p><?php echo stripslashes($product_info['products_description']); ?></p>
+
+***ADD AFTER:
+
+          <!-- BOF Bundled Products-->          
+          <?php if (tep_not_null($product_info['products_bundle'])) {
+          ?>
+          <table border="0" width="65%" cellspacing="1" cellpadding="2" class="infoBox">
+            <tr class="infoBoxContents">
+              <td>
+                <table border="0" width="100%" cellspacing="0" cellpadding="2">
+                  <tr>
+                    <td class="main" colspan="3">
+                    <?php
+
+		            if ($product_info['products_bundle'] == "yes") {
+		              $products_bundle = $product_info['products_bundle'];
+		              echo TEXT_PRODUCTS_BY_BUNDLE . "</td></tr>";
+		              $bundle_query = tep_db_query(" SELECT pd.products_name, pb.*, p.products_bundle, p.products_id, p.products_price, p.products_image
+											         FROM products p
+											         INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd
+											         ON p.products_id=pd.products_id
+											         INNER JOIN " . TABLE_PRODUCTS_BUNDLES . " pb
+											         ON pb.subproduct_id=pd.products_id
+											         WHERE pb.bundle_id = " . $HTTP_GET_VARS['products_id'] . " and language_id = '" . (int)$languages_id . "'");
+		              while ($bundle_data = tep_db_fetch_array($bundle_query)) {
+		                if ($bundle_data['products_bundle'] == "yes") {
+		                  // uncomment the following line to display subproduct qty
+		                  echo "<br>&raquo; <b>" . $bundle_data['subproduct_qty'] . " x " . $bundle_data['products_name'] . "</b>";
+		                  echo "<br>&raquo; <b> " . $bundle_data['products_name'] . "</b>";
+		                  $bundle_query_nested = tep_db_query("SELECT pd.products_name, pb.*, p.products_bundle, p.products_id, p.products_price
+						                                       FROM products p
+						                                       INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd
+						                                       ON p.products_id=pd.products_id
+						                                       INNER JOIN " . TABLE_PRODUCTS_BUNDLES . " pb
+						                                       ON pb.subproduct_id=pd.products_id
+						                                       WHERE pb.bundle_id = " . $bundle_data['products_id'] . " and language_id = '" . (int)$languages_id . "'");
+                                   
+		                  /*     $bundle_query_nested = tep_db_query("select pb.subproduct_id, pb.subproduct_qty, p.products_model, p.products_quantity, p.products_bundle, p.products_price, p.products_tax_class_id
+													from " . TABLE_PRODUCTS_BUNDLES . " pb
+													LEFT JOIN " . TABLE_PRODUCTS . " p
+													ON p.products_id=pb.subproduct_id
+													where pb.bundle_id = '" . $bundle_data['subproduct_id'] . "'");      */
+ 
+		                  while ($bundle_data_nested = tep_db_fetch_array($bundle_query_nested)) {
+		                    // uncomment the following line to display subproduct qty
+		                    echo "<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $bundle_data_nested['subproduct_qty'] . " x " . $bundle_data_nested['products_name'] . "</i>";
+		                    echo "<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $bundle_data_nested['products_name'] . "</i>";
+		                    $bundle_sum += $bundle_data_nested['products_price']*$bundle_data_nested['subproduct_qty'];
+		                  }
+		                } else {
+		                  // uncomment the following line to display subproduct qty
+		                  echo "<tr><td class=main valign=top>" ;
+		                  echo '<a href="' . tep_href_link(FILENAME_PRODUCT_INFO, ($cPath ? 'cPath=' . $cPath . '&' : '') . 'products_id=' . $bundle_data['products_id']) . '" target="_blank">' . tep_image(DIR_WS_IMAGES . $bundle_data['products_image'], $bundle_data['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="1" vspace="1"') . '</a>' ;
+		                  echo "</td><td class=main >&raquo; <b>" . $bundle_data['subproduct_qty'] . " x " . $bundle_data['products_name'] . '</b>&nbsp;&nbsp;&nbsp;</td><td align = right class=main><b>&nbsp;&nbsp;' .  $currencies->display_price($bundle_data['products_price'], tep_get_tax_rate($product_info['products_tax_class_id'])) . "</b></td></tr>";
+		                  //	echo "<br>&raquo; <b> " . $bundle_data['products_name'] . "</b>";
+		                  $bundle_sum += $bundle_data['products_price']*$bundle_data['subproduct_qty'];
+		                }
+		              }
+		              $bundle_saving = $bundle_sum - $product_info['products_price'];
+		              $bundle_sum = $currencies->display_price($bundle_sum, tep_get_tax_rate($product_info['products_tax_class_id']));
+		              $bundle_saving =  $currencies->display_price($bundle_saving, tep_get_tax_rate($product_info['products_tax_class_id']));
+		              // comment out the following line to hide the "saving" text
+		              echo "<tr><td colspan=3 class=main><p><b>" . TEXT_RATE_COSTS . '&nbsp;' . $bundle_sum . '</b></td></tr><tr><td class=main colspan=3><font color="red"><b>' . TEXT_IT_SAVE . '&nbsp;' . $bundle_saving . '</font></b>';
+		            }
+		            ?>
+                   </td>
+                  <td width="10"><?php echo tep_draw_separator('pixel_trans.gif', '10', '1'); ?></td>
+                </tr>
+              </table></td>
+            </tr>
+          </table>
+          <?php
+          }
+          ?>
+      <!-- EOF Bundled Products-->
+
+######################################################
+Step 8: catalog/checkout_process.php
+
+***FIND:
+  for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
+// Stock Update - Joao Correia
+    if (STOCK_LIMITED == 'true') {
+      if (DOWNLOAD_ENABLED == 'true') {
+        $stock_query_raw = "SELECT products_quantity, pad.products_attributes_filename 
+                            FROM " . TABLE_PRODUCTS . " p
+                            LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+                             ON p.products_id=pa.products_id
+                            LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
+                             ON pa.products_attributes_id=pad.products_attributes_id
+                            WHERE p.products_id = '" . tep_get_prid($order->products[$i]['id']) . "'";
+// Will work with only one option for downloadable products
+// otherwise, we have to build the query dynamically with a loop
+        $products_attributes = $order->products[$i]['attributes'];
+        if (is_array($products_attributes)) {
+          $stock_query_raw .= " AND pa.options_id = '" . $products_attributes[0]['option_id'] . "' AND pa.options_values_id = '" . $products_attributes[0]['value_id'] . "'";
+        }
+        $stock_query = tep_db_query($stock_query_raw);
+      } else {
+        $stock_query = tep_db_query("select products_quantity from " . TABLE_PRODUCTS . " where products_id = '" . tep_get_prid($order->products[$i]['id']) . "'");
+      }
+      if (tep_db_num_rows($stock_query) > 0) {
+        $stock_values = tep_db_fetch_array($stock_query);
+// do not decrement quantities if products_attributes_filename exists
+        if ((DOWNLOAD_ENABLED != 'true') || (!$stock_values['products_attributes_filename'])) {
+          $stock_left = $stock_values['products_quantity'] - $order->products[$i]['qty'];
+        } else {
+          $stock_left = $stock_values['products_quantity'];
+        }
+        tep_db_query("update " . TABLE_PRODUCTS . " set products_quantity = '" . $stock_left . "' where products_id = '" . tep_get_prid($order->products[$i]['id']) . "'");
+        if ( ($stock_left < 1) && (STOCK_ALLOW_CHECKOUT == 'false') ) {
+          tep_db_query("update " . TABLE_PRODUCTS . " set products_status = '0' where products_id = '" . tep_get_prid($order->products[$i]['id']) . "'");
+        }
+      }
+    }
+
+
+***CHANGE TO:
+
+  // BOF Bundled Products
+  for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
+// Stock Update - Joao Correia
+    if (STOCK_LIMITED == 'true') {
+      if (DOWNLOAD_ENABLED == 'true') {
+       //$stock_query_raw = "SELECT products_quantity, pad.products_attributes_filename 
+        $stock_query_raw = "SELECT products_quantity, products_bundle, pad.products_attributes_filename 
+                            FROM " . TABLE_PRODUCTS . " p
+                            LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+                             ON p.products_id=pa.products_id
+                            LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
+                             ON pa.products_attributes_id=pad.products_attributes_id
+                            WHERE p.products_id = '" . tep_get_prid($order->products[$i]['id']) . "'";
+// Will work with only one option for downloadable products
+// otherwise, we have to build the query dynamically with a loop
+        $products_attributes = $order->products[$i]['attributes'];
+        if (is_array($products_attributes)) {
+          $stock_query_raw .= " AND pa.options_id = '" . $products_attributes[0]['option_id'] . "' AND pa.options_values_id = '" . $products_attributes[0]['value_id'] . "'";
+        }
+        $stock_query = tep_db_query($stock_query_raw);
+      } else {
+        $stock_query = tep_db_query("select products_quantity, products_bundle from " . TABLE_PRODUCTS . " where products_id = '" . tep_get_prid($order->products[$i]['id']) . "'");      }
+      if (tep_db_num_rows($stock_query) > 0) {
+        $stock_values = tep_db_fetch_array($stock_query);
+        if ($stock_values['products_bundle'] == 'yes') {        // order item is a bundle and must be separated          $report_text .= "Bundle found in order : " . tep_get_prid($order->products[$i]['id']) . "<br>\n";          $bundle_query = tep_db_query("select pb.subproduct_id, pb.subproduct_qty, p.products_model, p.products_quantity, p.products_bundle           from " . TABLE_PRODUCTS_BUNDLES . " pb           LEFT JOIN " . TABLE_PRODUCTS . " p           ON p.products_id=pb.subproduct_id           where pb.bundle_id = '" . tep_get_prid($order->products[$i]['id']) . "'");          while ($bundle_data = tep_db_fetch_array($bundle_query)) {            if ($bundle_data['products_bundle'] == "yes") {              $report_text .= "<br>level 2 bundle found in order : " . $bundle_data['products_model'] . "<br>";              $bundle_query_nested = tep_db_query("select pb.subproduct_id, pb.subproduct_qty, p.products_model, p.products_quantity, p.products_bundle               from " . TABLE_PRODUCTS_BUNDLES . " pb               LEFT JOIN " . TABLE_PRODUCTS . " p               ON p.products_id=pb.subproduct_id               where pb.bundle_id = '" . $bundle_data['subproduct_id'] . "'");              while ($bundle_data_nested = tep_db_fetch_array($bundle_query_nested)) {                $stock_left = $bundle_data_nested['products_quantity'] - $bundle_data_nested['subproduct_qty'] * $order->products[$i]['qty'];                $report_text .= "updating level 2 item " . $bundle_data_nested['products_model'] . " : was " . $bundle_data_nested['products_quantity'] . " and number ordered is " . ($bundle_data_nested['subproduct_qty'] * $order->products[$i]['qty']) . " <br>\n";                tep_db_query("update " . TABLE_PRODUCTS . " set products_quantity = '" . $stock_left . "' where products_id = '" . $bundle_data_nested['subproduct_id'] . "'");              }            } else {              $stock_left = $bundle_data['products_quantity'] - $bundle_data['subproduct_qty'] * $order->products[$i]['qty'];              $report_text .= "updating level 1 item " . $bundle_data['products_model'] . " : was " . $bundle_data['products_quantity'] . " and number ordered is " . ($bundle_data['subproduct_qty'] * $order->products[$i]['qty']) . " <br>\n";              tep_db_query("update " . TABLE_PRODUCTS . " set products_quantity = '" . $stock_left . "' where products_id = '" . $bundle_data['subproduct_id'] . "'");            }          }        } else {          // order item is normal and should be treated as such          $report_text .= "Normal product found in order : " . tep_get_prid($order->products[$i]['id']) . "\n";
+          // do not decrement quantities if products_attributes_filename exists
+          if ((DOWNLOAD_ENABLED != 'true') || (!$stock_values['products_attributes_filename'])) {
+            $stock_left = $stock_values['products_quantity'] - $order->products[$i]['qty'];
+          } else {
+            $stock_left = $stock_values['products_quantity'];
+          }
+          tep_db_query("update " . TABLE_PRODUCTS . " set products_quantity = '" . $stock_left . "' where products_id = '" . tep_get_prid($order->products[$i]['id']) . "'");
+          if ( ($stock_left < 1) && (STOCK_ALLOW_CHECKOUT == 'false') ) {
+            tep_db_query("update " . TABLE_PRODUCTS . " set products_status = '0' where products_id = '" . tep_get_prid($order->products[$i]['id']) . "'");
+          }
+        } 
+      }
+    }
+    //EOF Bundled Products
+
+######################################################
+STEP 9:catalog/includes/module/payment/paypal_standard.php
+***ONLY If you've got the PayPal IPN module
+
+***FIND:
+      for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
+// Stock Update - Joao Correia
+        if (STOCK_LIMITED == 'true') {
+          if (DOWNLOAD_ENABLED == 'true') {
+            $stock_query_raw = "SELECT products_quantity, pad.products_attributes_filename
+                                FROM " . TABLE_PRODUCTS . " p
+                                LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+                                ON p.products_id=pa.products_id
+                                LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
+                                ON pa.products_attributes_id=pad.products_attributes_id
+                                WHERE p.products_id = '" . tep_get_prid($order->products[$i]['id']) . "'";
+// Will work with only one option for downloadable products
+// otherwise, we have to build the query dynamically with a loop
+            $products_attributes = $order->products[$i]['attributes'];
+            if (is_array($products_attributes)) {
+              $stock_query_raw .= " AND pa.options_id = '" . $products_attributes[0]['option_id'] . "' AND pa.options_values_id = '" . $products_attributes[0]['value_id'] . "'";
+            }
+            $stock_query = tep_db_query($stock_query_raw);
+          } else {
+            $stock_query = tep_db_query("select products_quantity from " . TABLE_PRODUCTS . " where products_id = '" . tep_get_prid($order->products[$i]['id']) . "'");
+          }
+          if (tep_db_num_rows($stock_query) > 0) {
+            $stock_values = tep_db_fetch_array($stock_query);
+// do not decrement quantities if products_attributes_filename exists
+            if ((DOWNLOAD_ENABLED != 'true') || (!$stock_values['products_attributes_filename'])) {
+              $stock_left = $stock_values['products_quantity'] - $order->products[$i]['qty'];
+            } else {
+              $stock_left = $stock_values['products_quantity'];
+            }
+            tep_db_query("update " . TABLE_PRODUCTS . " set products_quantity = '" . $stock_left . "' where products_id = '" . tep_get_prid($order->products[$i]['id']) . "'");
+            if ( ($stock_left < 1) && (STOCK_ALLOW_CHECKOUT == 'false') ) {
+              tep_db_query("update " . TABLE_PRODUCTS . " set products_status = '0' where products_id = '" . tep_get_prid($order->products[$i]['id']) . "'");
+            }
+          }
+        }
+
+
+***CHANGE TO:
+
+      // BOF Bundled Products added products_bundle,
+      for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
+        // Stock Update - Joao Correia
+        if (STOCK_LIMITED == 'true') {
+          if (DOWNLOAD_ENABLED == 'true') {
+            //$stock_query_raw = "SELECT products_quantity, pad.products_attributes_filename 
+            $stock_query_raw = "SELECT products_quantity, products_bundle, pad.products_attributes_filename 
+                                FROM " . TABLE_PRODUCTS . " p
+                                LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa
+                                ON p.products_id=pa.products_id
+                                LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
+                                ON pa.products_attributes_id=pad.products_attributes_id
+                                WHERE p.products_id = '" . tep_get_prid($order->products[$i]['id']) . "'";
+            // Will work with only one option for downloadable products
+            // otherwise, we have to build the query dynamically with a loop
+            $products_attributes = $order->products[$i]['attributes'];
+            if (is_array($products_attributes)) {
+              $stock_query_raw .= " AND pa.options_id = '" . $products_attributes[0]['option_id'] . "' AND pa.options_values_id = '" . $products_attributes[0]['value_id'] . "'";
+            }
+            $stock_query = tep_db_query($stock_query_raw);
+            } else {
+              $stock_query = tep_db_query("select products_quantity, products_bundle from " . TABLE_PRODUCTS . " where products_id = '" . tep_get_prid($order->products[$i]['id']) . "'");            }
+            if (tep_db_num_rows($stock_query) > 0) {
+              $stock_values = tep_db_fetch_array($stock_query);
+              if ($stock_values['products_bundle'] == 'yes') {                // order item is a bundle and must be separated                $report_text .= "Bundle found in order : " . tep_get_prid($order->products[$i]['id']) . "<br>\n";                $bundle_query = tep_db_query("select pb.subproduct_id, pb.subproduct_qty, p.products_model, p.products_quantity, p.products_bundle                                               from " . TABLE_PRODUCTS_BUNDLES . " pb                                               LEFT JOIN " . TABLE_PRODUCTS . " p                                               ON p.products_id=pb.subproduct_id                                               where pb.bundle_id = '" . tep_get_prid($order->products[$i]['id']) . "'");                while ($bundle_data = tep_db_fetch_array($bundle_query)) {                  if ($bundle_data['products_bundle'] == "yes") {                    $report_text .= "<br>level 2 bundle found in order : " . $bundle_data['products_model'] . "<br>";                    $bundle_query_nested = tep_db_query("select pb.subproduct_id, pb.subproduct_qty, p.products_model, p.products_quantity, p.products_bundle                                               from " . TABLE_PRODUCTS_BUNDLES . " pb                                               LEFT JOIN " . TABLE_PRODUCTS . " p                                               ON p.products_id=pb.subproduct_id                                               where pb.bundle_id = '" . $bundle_data['subproduct_id'] . "'");                    while ($bundle_data_nested = tep_db_fetch_array($bundle_query_nested)) {                    $stock_left = $bundle_data_nested['products_quantity'] - $bundle_data_nested['subproduct_qty'] * $order->products[$i]['qty'];                    $report_text .= "updating level 2 item " . $bundle_data_nested['products_model'] . " : was " . $bundle_data_nested['products_quantity'] . " and number ordered is " . ($bundle_data_nested['subproduct_qty'] * $order->products[$i]['qty']) . " <br>\n";                    tep_db_query("update " . TABLE_PRODUCTS . " set products_quantity = '" . $stock_left . "' where products_id = '" . $bundle_data_nested['subproduct_id'] . "'");                  }                } else {                  $stock_left = $bundle_data['products_quantity'] - $bundle_data['subproduct_qty'] * $order->products[$i]['qty'];                  $report_text .= "updating level 1 item " . $bundle_data['products_model'] . " : was " . $bundle_data['products_quantity'] . " and number ordered is " . ($bundle_data['subproduct_qty'] * $order->products[$i]['qty']) . " <br>\n";                  tep_db_query("update " . TABLE_PRODUCTS . " set products_quantity = '" . $stock_left . "' where products_id = '" . $bundle_data['subproduct_id'] . "'");                }              }            } else {              // order item is normal and should be treated as such              $report_text .= "Normal product found in order : " . tep_get_prid($order->products[$i]['id']) . "\n";
+              // do not decrement quantities if products_attributes_filename exists
+              if ((DOWNLOAD_ENABLED != 'true') || (!$stock_values['products_attributes_filename'])) {
+                $stock_left = $stock_values['products_quantity'] - $order->products[$i]['qty'];
+              } else {
+                $stock_left = $stock_values['products_quantity'];
+              }
+              tep_db_query("update " . TABLE_PRODUCTS . " set products_quantity = '" . $stock_left . "' where products_id = '" . tep_get_prid($order->products[$i]['id']) . "'");
+              if ( ($stock_left < 1) && (STOCK_ALLOW_CHECKOUT == 'false') ) {
+                tep_db_query("update " . TABLE_PRODUCTS . " set products_status = '0' where products_id = '" . tep_get_prid($order->products[$i]['id']) . "'");
+              }
+            } 
+          }
+        }
+       //EOF Bundled Products
+
+######################################################
+Step 9: catalog/checkout_confirmation.php
+
+***FIND:
+    if (STOCK_CHECK == 'true') {
+      echo tep_check_stock($order->products[$i]['id'], $order->products[$i]['qty']);
+    }
+
+***CHANGE TO:
+    // BOF Bundled Products
+    if (STOCK_CHECK == 'true') {
+	   $bundle_status_query = tep_db_query("SELECT products_bundle FROM " . TABLE_PRODUCTS . " where products_id = " . tep_get_prid($order->products[$i]['id']));
+	   $bundle_status = tep_db_fetch_array($bundle_status_query);
+	   
+	   if ($bundle_status['products_bundle'] == "yes") {
+	     $bundle_stock_query = tep_db_query("SELECT pb.subproduct_id, p.products_quantity, pd.products_name from " . TABLE_PRODUCTS_BUNDLES . " pb LEFT JOIN products p on p.products_id=pb.subproduct_id LEFT JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd on p.products_id=pd.products_id where pb.bundle_id = '" . tep_get_prid($order->products[$i]['id']) . "' and pd.language_id = '1'");
+		 while ($bundle_stock = tep_db_fetch_array($bundle_stock_query)) {
+		   if ($bundle_stock['products_quantity'] <= 0 && STOCK_ALLOW_CHECKOUT != true) {
+		     echo '<br><b><font color="red">' . $bundle_stock['products_name'] . ' is out of stock</font></b>';
+			 $any_out_of_stock = true;
+		   } else if ($bundle_stock['products_quantity'] <= 0 && STOCK_ALLOW_CHECKOUT == true) {
+		     echo '<br>Extra 2 days delivery for item ' . $bundle_stock['products_name'];
+		   } 
+		 }
+	   } else {
+		  if (STOCK_ALLOW_CHECKOUT != true) { // item is barred from checkout when stock is too low
+			if ($stock = tep_check_stock($order->products[$i]['id'], $order->products[$i]['qty']) ){
+			  $any_out_of_stock = true;
+			}
+			echo $stock;
+		  } 
+	   }
+    }
+    // EOF Bundled Products
+
+
+***FIND:
+// Stock Check
+  $any_out_of_stock = false;
+  if (STOCK_CHECK == 'true') {
+    for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
+      if (tep_check_stock($order->products[$i]['id'], $order->products[$i]['qty'])) {
+        $any_out_of_stock = true;
+      }
+    }
+    // Out of Stock
+    if ( (STOCK_ALLOW_CHECKOUT != 'true') && ($any_out_of_stock == true) ) {
+      tep_redirect(tep_href_link(FILENAME_SHOPPING_CART));
+    }
+  }
+
+***CHANGE TO:
+/* BOF Bundled Products
+// Stock Check
+  $any_out_of_stock = false;
+  if (STOCK_CHECK == 'true') {
+    for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
+      if (tep_check_stock($order->products[$i]['id'], $order->products[$i]['qty'])) {
+        $any_out_of_stock = true;
+      }
+    }
+    // Out of Stock
+    if ( (STOCK_ALLOW_CHECKOUT != 'true') && ($any_out_of_stock == true) ) {
+      tep_redirect(tep_href_link(FILENAME_SHOPPING_CART));
+    }
+  }
+  EOF Bundled Products */
+
+######################################################
+STEP 10: catalog/includes/languages/english/product_info.php
+
+***ADD BEFORE FINAL ?>:
+// BOF Bundled Products
+define('TEXT_PRODUCTS_BY_BUNDLE', 'This product contains the following items:');
+define('TEXT_RATE_COSTS', 'Cost of separate parts:');
+define('TEXT_IT_SAVE', 'You save');
+// EOF Bundled Products
+
+######################################################
+STEP 11: catalog/includes/languages/espanol/product_info.php
+
+***ADD BEFORE FINAL ?>:
+// BOF Bundled Products
+define('TEXT_PRODUCTS_BY_BUNDLE', 'Este producto contiene los puntos siguientes:');
+define('TEXT_RATE_COSTS', 'Coste de piezas separadas:');
+define('TEXT_IT_SAVE', 'Usted ahorra');
+// EOF Bundled Products
+
+######################################################
+STEP 12: catalog/includes/languages/german/product_info.php
+
+***ADD BEFORE FINAL ?>:
+// BOF Bundled Products
+define('TEXT_PRODUCTS_BY_BUNDLE', 'Diese Produkte gehören zu dem Bundlepaket:');
+define('TEXT_RATE_COSTS', 'Seperate Kosten:');
+define('TEXT_IT_SAVE', 'Sie sparen');
+// EOF Bundled Products
+
+######################################################
+STEP 13: catalog/includes/functions/general.php
+
+***FIND:
+
+////
+// Return a product's stock
+// TABLES: products
+  function tep_get_products_stock($products_id) {
+    $products_id = tep_get_prid($products_id);
+    $stock_query = tep_db_query("select products_quantity from " . TABLE_PRODUCTS . " where products_id = '" . (int)$products_id . "'");
+    $stock_values = tep_db_fetch_array($stock_query);
+
+    return $stock_values['products_quantity'];
+  }
+  
+***CHANGE TO:
+// BOF Bundled Products
+////
+// Return a product's stock
+// TABLES: products
+// function heavily modified for bundle mod
+  function tep_get_products_stock($products_id) {
+    $products_id = tep_get_prid($products_id);
+    //add bundle field to database query
+    $stock_query = tep_db_query("select products_quantity, products_bundle from " . TABLE_PRODUCTS . " where products_id = '" . (int)$products_id . "'");
+    
+    //determine whether product is a bundle
+    $stock_data = tep_db_fetch_array($stock_query);
+	if ($stock_data['products_bundle'] == 'yes') {
+	  // order item is a bundle and must be separated
+	  $bundle_query = tep_db_query("select pb.subproduct_id, pb.subproduct_qty, p.products_quantity, p.products_bundle from " . TABLE_PRODUCTS_BUNDLES . " pb LEFT JOIN " . TABLE_PRODUCTS . " p ON p.products_id=pb.subproduct_id where pb.bundle_id = '" . (int)$products_id . "'");
+	  while ($bundle_data = tep_db_fetch_array($bundle_query)) {
+	    if ($bundle_data['products_bundle'] == "yes") {
+	  	  //seperation routine in case there is also a bundle within a bundle
+		  $bundle_query_nested = tep_db_query("select pb.subproduct_id, pb.subproduct_qty, p.products_quantity, p.products_bundle from " . TABLE_PRODUCTS_BUNDLES . " pb LEFT JOIN " . TABLE_PRODUCTS . " p ON p.products_id=pb.subproduct_id where pb.bundle_id = '" . $bundle_data['subproduct_id'] . "'");
+		  while ($bundle_data_nested = tep_db_fetch_array($bundle_query_nested)) {
+		    //generate stock levels string within 2nd level bundle, adding commas between values
+		    $stock_bundle .= (int)($bundle_data_nested['products_quantity'] / $bundle_data_nested['subproduct_qty']) . ',';
+		  }
+		} else {
+		  //generate stock levels string if it is only a 1st level bundle, adding commas between values
+		  $stock_bundle .= (int)($bundle_data['products_quantity'] / $bundle_data['subproduct_qty']) . ',';
+		}
+	  }
+	  //create an array from the stock_bundle string
+	  $stock_bundle_array = explode (',', $stock_bundle);
+	  //sorts the array in order of stock levels of subproducts 
+	  sort($stock_bundle_array);
+	  //select the smallest subproduct stock value as the stock level of the bundle (first value is null due to way $stock_bundle is made)
+	  $stock_values = $stock_bundle_array[1];
+	} else {
+	  //generate stock value for single product
+	  $stock_values = $stock_data['products_quantity'];
+    }
+    
+    return $stock_values;
+  }
+// EOF Bundled Products
+
+######################################################
+STEP 14: catalog/includes/modules/product_listing.php:
+
+***Find: 
+          case 'PRODUCT_LIST_QUANTITY':
+            $lc_align = 'right';
+            $lc_text = '&nbsp;' . $listing['products_quantity'] . '&nbsp;';
+            break;
+
+***CHANGE TO:
+          // BOF Bundled Products
+          case 'PRODUCT_LIST_QUANTITY':
+            $lc_align = 'right';
+            $StockChecker = tep_get_products_stock($listing['products_id']);	
+            $lc_text = TEXT_QUANTITY .'&nbsp;(' . $StockChecker	.')';
+            break;
+          // EOF Bundled Products
+
+***Find:
+
+          case 'PRODUCT_LIST_BUY_NOW':
+            $lc_align = 'center';
+            $lc_text = '<a href="' . tep_href_link(basename($PHP_SELF), tep_get_all_get_params(array('action')) . 'action=buy_now&products_id=' . $listing['products_id']) . '">' . tep_image_button('button_buy_now.gif', IMAGE_BUTTON_BUY_NOW) . '</a>&nbsp;';
+            break;
+
+***Change to:
+          // BOF Bundled Products
+          case 'PRODUCT_LIST_BUY_NOW':
+            $lc_align = 'center';
+            $StockChecker1 = tep_get_products_stock($listing['products_id']);
+	          if ( $StockChecker1 <> 0){
+                $lc_text = (($listing['products_price'] > 0) ? '<a href="' . tep_href_link(basename($PHP_SELF), tep_get_all_get_params(array('action')) . 'action=buy_now&products_id=' . $listing['products_id']) . '">' . tep_image_button('button_buy_now.gif', IMAGE_BUTTON_BUY_NOW) . '</a>&nbsp;' : '&nbsp;');
+	          }else{    
+                $lc_text = tep_image_button('button_out_of_stock.gif', IMAGE_BUTTON_OUT_OF_STOCK) . '&nbsp;';
+	          }
+	          break;
+          // EOF Bundled Products
+
+######################################################
+STEP 15: catalog/includes/languages/{insert your language(s) here}.php
+
+***ADD BEFORE FINAL ?>:
+
+//BOF Bundled Products
+define('IMAGE_BUTTON_OUT_OF_STOCK', 'Out of Stock');
+//EOF Bundled Products
+
+######################################################
+STEP 16:
+***Copy catalog/includes/languages/{insert your language(s) here}/images/button_out_of_stock.gif
+
+######################################################
+STEP 17: catalog/admin/includes/functions/general.php
+
+***FIND:
+  function tep_remove_order($order_id, $restock = false) {
+    if ($restock == 'on') {
+      $order_query = tep_db_query("select products_id, products_quantity from " . TABLE_ORDERS_PRODUCTS . " where orders_id = '" . (int)$order_id . "'");
+      while ($order = tep_db_fetch_array($order_query)) {
+        tep_db_query("update " . TABLE_PRODUCTS . " set products_quantity = products_quantity + " . $order['products_quantity'] . ", products_ordered = products_ordered - " . $order['products_quantity'] . " where products_id = '" . (int)$order['products_id'] . "'");
+      }
+    }
+
+    tep_db_query("delete from " . TABLE_ORDERS . " where orders_id = '" . (int)$order_id . "'");
+    tep_db_query("delete from " . TABLE_ORDERS_PRODUCTS . " where orders_id = '" . (int)$order_id . "'");
+    tep_db_query("delete from " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " where orders_id = '" . (int)$order_id . "'");
+    tep_db_query("delete from " . TABLE_ORDERS_STATUS_HISTORY . " where orders_id = '" . (int)$order_id . "'");
+    tep_db_query("delete from " . TABLE_ORDERS_TOTAL . " where orders_id = '" . (int)$order_id . "'");
+  }
+
+***CHANGE TO:
+  
+//BOF Bundled Products
+  function tep_remove_order($order_id, $restock = false) {
+    if ($restock == 'on') {
+      $order_query = tep_db_query("select products_id, products_quantity from " . TABLE_ORDERS_PRODUCTS . " where orders_id = '" . (int)$order_id . "'");
+      while ($order = tep_db_fetch_array($order_query)) {
+        $is_bundle = 'no';
+        $product_bundle_query = tep_db_query("select subproduct_id, subproduct_qty from " . TABLE_PRODUCTS_BUNDLES . ", " . TABLE_PRODUCTS . " where bundle_id = '" . (int)$order['products_id'] . "' and  products_id = '" . (int)$order['products_id'] . "' and products_bundle = 'yes'");
+        while ($product_bundle_data = tep_db_fetch_array($product_bundle_query)) {
+          $is_bundle = 'yes';
+          tep_db_query("update " . TABLE_PRODUCTS . " set products_quantity = products_quantity + " . $product_bundle_data['subproduct_qty']*$order['products_quantity'] . ", products_ordered = products_ordered - " . $product_bundle_data['subproduct_qty']*$order['products_quantity'] . " where products_id = '" . (int)$product_bundle_data['subproduct_id'] . "'");
+        }
+        if ($is_bundle == 'no') {
+          tep_db_query("update " . TABLE_PRODUCTS . " set products_quantity = products_quantity + " . $order['products_quantity'] . ", products_ordered = products_ordered - " . $order['products_quantity'] . " where products_id = '" . (int)$order['products_id'] . "'");
+        }
+      }
+    }
+    tep_db_query("delete from " . TABLE_ORDERS . " where orders_id = '" . (int)$order_id . "'");
+    tep_db_query("delete from " . TABLE_ORDERS_PRODUCTS . " where orders_id = '" . (int)$order_id . "'");
+    tep_db_query("delete from " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " where orders_id = '" . (int)$order_id . "'");
+    tep_db_query("delete from " . TABLE_ORDERS_STATUS_HISTORY . " where orders_id = '" . (int)$order_id . "'");
+    tep_db_query("delete from " . TABLE_ORDERS_TOTAL . " where orders_id = '" . (int)$order_id . "'");
+  }
+//EOF Bundled Products
+
+######################################################
+STEP 18: catalog/includes/classes/shopping_cart.php: BE CAREFUL! THERE ARE TWO VERSIONS OF THIS CHANGE. 
+
+***FIND:
+         $products_query = tep_db_query("select p.products_id, pd.products_name, p.products_model, p.products_image, p.products_price, p.products_weight, p.products_tax_class_id from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_id = '" . (int)$products_id . "' and pd.products_id = p.products_id and pd.language_id = '" . (int)$languages_id . "'");
+***OR***
+***osCommerce Online Merchant v2.2: FIND:
+        $products_query = tep_db_query("select p.products_id, pd.products_name, p.products_model, p.products_price, p.products_weight, p.products_tax_class_id from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_id='" . (int)tep_get_prid($products_id) . "' and pd.products_id = p.products_id and pd.language_id = '" . (int)$languages_id . "'");
+
+
+***CHANGE TO:
+        // BOF Bundled Products
+        $products_query = tep_db_query("select p.products_id, pd.products_name, p.products_model, p.products_bundle, p.products_image, p.products_price, p.products_weight, p.products_tax_class_id from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_id = '" . (int)$products_id . "' and pd.products_id = p.products_id and pd.language_id = '" . (int)$languages_id . "'");
+        // EOF Bundled Products
+***OR***
+***osCommerce Online Merchant v2.2: CHANGE TO:
+        $products_query = tep_db_query("select p.products_id, pd.products_name, p.products_model, p.products_bundle, p.products_price, p.products_weight, p.products_tax_class_id from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_id='" . (int)tep_get_prid($products_id) . "' and pd.products_id = p.products_id and pd.language_id = '" . (int)$languages_id . "'");
+
+***FIND:
+                                    'name' => $products['products_name'],
+                                    'model' => $products['products_model'],
+
+***ADD AFTER:
+                                    'bundle' => $products['products_bundle'],
+
+######################################################
+STEP 19: catalog/shopping_cart.php
+
+***FIND:
+          $products[$i][$option]['price_prefix'] = $attributes_values['price_prefix'];
+        }
+      }
+    }
+
+***ADD AFTER:
+    // BOF Products Bundles
+    if (STOCK_CHECK == 'true') {
+      $runningsums = array();
+
+      // Temporarily sort the cart so that bundles are first to
+      // prevent marking a bundle out of stock, if the user tries to order
+      // a bundle's worth separately.
+
+      // Make a copy of the cart.
+      $workprods = $products;
+      for ($i = 0, $n = sizeof($workprods); $i < $n; $i++) {
+        // Remember the original sort order.
+        $workprods[$i]['origpos'] = $i;
+      }
+
+      // Sort.
+      $inorder = false;
+      while (!$inorder) {
+        $inorder = true;
+        for ($i = 0, $n = sizeof($workprods); $i < $n-1; $i++) {
+          if ($workprods[$i]['bundle'] != "yes" && $workprods[$i+1]['bundle'] == "yes") {
+            $workprod = $workprods[$i+1];
+            $workprods[$i+1] = $workprods[$i];
+            $workprods[$i] = $workprod;
+            $inorder = false;
+            break;
+          }
+        }
+      }
+
+      for ($i = 0, $n = sizeof($workprods); $i < $n; $i++) {
+        if ($workprods[$i]['bundle'] == "yes") {
+          $stock_checks[0][$i] = tep_check_stock($workprods[$i]['id'], $workprods[$i]['quantity']);
+          if (!tep_not_null($stock_checks[0][$i])) {
+            // The bundle is in stock, so count this against the total.
+            $bundle_query = tep_db_query("SELECT subproduct_id, subproduct_qty FROM " . TABLE_PRODUCTS_BUNDLES . " WHERE bundle_id = '" . $workprods[$i]['id'] . "'");
+            while ($bundle_data = tep_db_fetch_array($bundle_query)) {
+              $work = $bundle_data['subproduct_id'];
+              $runningsums[$work] += $bundle_data['subproduct_qty'];
+            }
+          }
+        } else {
+          $work = $workprods[$i]['id'];
+          $runningsums[$work] += $workprods[$i]['quantity'];
+          $stock_checks[0][$i] = tep_check_stock($workprods[$i]['id'], $runningsums[$work]);
+        }
+      }
+
+      // Now go back to the original sort order.
+      for ($i = 0, $n = sizeof($workprods); $i < $n; $i++) {
+        $work = $workprods[$i]['origpos'];
+        $stock_checks[1][$i] = $stock_checks[0][$work];
+      }
+    }
+    // EOF Product Bundles
+
+
+***FIND
+         $stock_check = tep_check_stock($products[$i]['id'], $products[$i]['quantity']);
+***CHANGE TO:
+        //BOF Bundled Products
+      //$stock_check = tep_check_stock($products[$i]['id'], $products[$i]['quantity']);
+        $stock_check = $stock_checks[1][$i];
+        //EOF Bundled Products
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,308 @@
+////////////////////////////////////////////////
+// CHECKBOXES
+////////////////////////////////////////////////
+
+var CC_isIE      = document.all;
+var CC_isNE      = document.getElementById && !document.all;
+
+/**
+ * checkbox
+ */
+var CC_cbImage   = "data/images/gui/cb.png";
+var CC_cbHeight  = 13;
+var CC_cbWidth   = 13;
+
+/**
+ * coordinates
+ */
+var CC_coordHover = 13;
+var CC_coordMdown = 26;
+var CC_coordMrev  = 39;
+var CC_coordClick = 52;
+var CC_coordHoverDown = 65;
+
+function styleCheckBox( cn )
+{
+	if (!cn) {
+		window.alert("Please define a check box class name to style.");
+		return false;
+	}
+	if (!CC_cbImage || !CC_cbHeight || !CC_cbWidth) return false;
+	if (!CC_coordHover || !CC_coordMdown || !CC_coordMrev || !CC_coordClick || !CC_coordHoverDown) return false;
+
+	var cb = document.getElementsByTagName("INPUT");
+	var cl = cb.length;
+
+	for (var i = 0; i < cl ; i++) {
+
+		var ccb   = cb[i];
+		var ccn   = ccb.className;
+		var ccna  = ccn.split(" ");
+		var ccnal = ccna.length;
+		var pf    = false;
+
+		ccb.id    = "CC_cb" + i;
+
+		/**
+		 * check className validity
+		 */
+		if (ccnal == 1) {
+			if (ccn == cn) pf = true;
+		} else {
+			for (var j = 0; j < ccnal; j++) {
+				if (ccna[j] == cn) pf = true;
+			}
+		}
+
+		/**
+		 * perform change
+		 */
+		if (pf) {
+
+			/**
+			 * hide real checkbox
+			 */
+			ccb.style.display = "none";
+
+			if (ccb.parentNode) {
+
+				/**
+				 * create checkbox
+				 */
+				var ncb = document.createElement("DIV");
+				ncb.style.fontSize    = "0";
+				ncb.style.cursor      = "pointer";
+				ncb.style.width       = CC_cbWidth + "px";
+				ncb.style.height      = CC_cbHeight + "px";
+				ncb.style.background  = "url(" + CC_cbImage + ")";
+				ncb.style.marginRight = "2px";
+
+				if (CC_isNE) {
+					ncb.style.display = "-moz-inline-box";
+					ncb.style.verticalAlign = "11px";
+				} else {
+				//	ncb.style.styleFloat = "center";
+				}
+
+				/**
+				 * check if checkbox is already checked
+				 */
+				if ($("CC_cb" + i).checked) {
+					ncb.style.backgroundPosition = "0 -" + CC_coordClick + "px";
+				}
+
+				/**
+				 * write new checkbox
+				 */
+				var ne = ccb.parentNode.insertBefore(ncb, ccb.nextSibling);
+				ne.id = "CC_checkbox" + i;
+
+				/**
+				 * mouse inside checkbox
+				 */
+				var cid;
+				var mi = false;
+
+				/**
+				 * checkbox actions
+				 */
+				 
+				$("CC_checkbox" + i).onmouseover = function() {
+					cid = getRealId(this.id);
+					if (!$("CC_cb" + cid).checked) {
+						this.style.backgroundPosition = "0 -" + CC_coordHover + "px";
+					}
+					else if ($("CC_cb" + cid).checked) {
+						this.style.backgroundPosition = "0 -" + CC_coordHoverDown + "px";
+					}
+					
+				}
+				$("CC_checkbox" + i).onmouseout = function() {
+					this.style.backgroundPosition = !$("CC_cb" + cid).checked ? "top" : "0 -" + CC_coordClick + "px";
+				}
+				$("CC_checkbox" + i).onmousedown = function() {
+					this.style.backgroundPosition = !$("CC_cb" + cid).checked ? "0 -" + CC_coordMdown + "px" : "0 -" + CC_coordMrev + "px";
+					mi = true;
+				}
+				$("CC_checkbox" + i).onmouseup = function() {
+					if (mi) {
+						this.style.backgroundPosition = !$("CC_cb" + cid).checked ? "0 -" + CC_coordClick + "px" : "top";
+						$("CC_cb" + cid).checked = !$("CC_cb" + cid).checked;
+					}
+					mi = false;
+				}
+
+			}
+		}
+	}
+}
+
+function getRealId( Id )
+{
+	return Id.replace(/[^\d]+/, "");
+}
+
+function $( Id )
+{
+	if (document.getElementById){
+		return document.getElementById(Id);
+	} else if (document.all) {
+		return document.all[Id];
+	}
+}
+
+////////////////////////////////////////////////
+// RADIO BUTTONS
+////////////////////////////////////////////////
+
+//document.write('<link rel="stylesheet" type="text/css" href="inputs.css" media="screen" />'); 
+var Input = { 
+  initialize: function() { 
+    if(document.getElementsByTagName("form")) { 
+      var divs = document.getElementsByTagName("div"); 
+      for(var int = 0; int < divs.length; int++) { 
+        if(divs[int].className.match("radio")) { 
+          divs[int].onmousedown = Input.effect; 
+          divs[int].onmouseup = Input.handle; 
+          window.onmouseup = Input.clear; 
+        } 
+      } 
+    } 
+  }, 
+
+  effect: function() { 
+    if(this.className == "checkbox" || this.className == "radio") { 
+      this.style.backgroundPosition = "0 -26px"; 
+    } else { 
+      this.style.backgroundPosition = "0 -79px"; 
+    } 
+  }, 
+
+  handle: function() { 
+    selector = this.getElementsByTagName("input")[0]; 
+    if(this.className == "checkbox") { 
+      selector.checked = true; 
+      this.className = "checkbox selected"; 
+      this.style.backgroundPosition = "0 -52px"; 
+    } else if(this.className == "checkbox selected") { 
+      selector.checked = false; 
+      this.className = "checkbox"; 
+      this.style.backgroundPosition = "0 0"; 
+    } else { 
+      selector.checked = true; 
+      this.className = "radio selected"; 
+      this.style.backgroundPosition = "0 -52px"; 
+      inputs = document.getElementsByTagName("input"); 
+      for(int = 0; int < inputs.length; int++) { 
+        if(inputs[int].getAttribute("name") == selector.getAttribute("name")) { 
+          if(inputs[int] != selector) { 
+            inputs[int].parentNode.className = "radio"; 
+            inputs[int].parentNode.style.backgroundPosition = "0 0"; 
+          } 
+        } 
+      } 
+    } 
+  }, 
+
+  clear: function() { 
+    divs = document.getElementsByTagName("div"); 
+    for(var int = 0; int < divs.length; int++) { 
+      if(divs[int].className == "checkbox" || divs[int].className == "radio") { 
+        divs[int].style.backgroundPosition = "0 0"; 
+      } else if(divs[int].className == "checkbox selected" || divs[int].className == "radio selected") { 
+        divs[int].style.backgroundPosition = "0 -52px"; 
+      } 
+    } 
+  } 
+}
+window.onload = Input.initialize; 
+
+
+
+////////////////////////////////////////////////
+// SELECT BOXES
+////////////////////////////////////////////////
+
+// <![CDATA[
+    function selectReplacement(obj) {
+      obj.className += ' replaced';
+      var ul = document.createElement('ul');
+      ul.className = 'selectReplacement';
+      var opts = obj.options;
+      var selectedOpt = (!obj.selectedIndex) ? 0 : obj.selectedIndex;
+      for (var i=0; i<opts.length; i++) {
+        var li = document.createElement('li');
+        var txt = document.createTextNode(opts[i].text);
+        li.appendChild(txt);
+        li.selIndex = i;
+        li.selectID = obj.id;
+        li.onclick = function() {
+          selectMe(this);
+        };
+        if (i == selectedOpt) {
+          li.className = 'selected';
+          li.onclick = function() {
+            this.parentNode.className += ' selectOpen';
+            this.onclick = function() {
+              selectMe(this);
+            };
+          };
+        }
+        if (window.attachEvent) {
+          li.onmouseover = function() {
+            this.className += ' hover';
+          };
+          li.onmouseout = function() {
+            this.className = 
+              this.className.replace(new RegExp(" hover\\b"), '');
+          };
+        }
+        ul.appendChild(li);
+      }
+      obj.onfocus = function() {
+        ul.className += ' selectFocused';
+      };
+      obj.onblur = function() {
+        ul.className = 'selectReplacement';
+      };
+      obj.onchange = function() {
+        var idx = this.selectedIndex;
+        selectMe(ul.childNodes[idx]);
+      };
+      obj.onkeypress = obj.onchange;
+      obj.parentNode.insertBefore(ul,obj);
+    }
+    function selectMe(obj) {
+      var lis = obj.parentNode.getElementsByTagName('li');
+      for (var i=0; i<lis.length; i++) {
+        if (lis[i] != obj) {
+          lis[i].className='';
+          lis[i].onclick = function() {
+            selectMe(this);
+          };
+       } else {
+          setVal(obj.selectID, obj.selIndex);
+          obj.className='selected';
+          obj.parentNode.className = 
+            obj.parentNode.className.replace(new RegExp(" selectOpen\\b"), '');
+          obj.onclick = function() {
+            obj.parentNode.className += ' selectOpen';
+            this.onclick = function() {
+              selectMe(this);
+            };
+          };
+        }
+      }
+    }
+    function setVal(objID,val) {
+      var obj = document.getElementById(objID);
+      obj.selectedIndex = val;
+    }
+    function setForm() {
+      var s = document.getElementsByTagName('select');
+      for (var i=0; i<s.length; i++) {
+        selectReplacement(s[i]);
+      }
+    }
+
+// ]]>

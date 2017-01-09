@@ -1,0 +1,59 @@
+[Classes]
+  1 = Hoplite
+  2 = Spearman    ; Does not use phalanx like the hoplite
+  3 = Swordsman
+  4 = Pikeman
+  5 = Archer
+  6 = Cavalry_Spear
+  7 = Cavalry_Sword
+  8 = Cavalry_Archer
+  9 = Town_Guard
+
+[Units]
+  1 = Greek_Hoplite
+
+
+
+[Greek_Hoplite]
+  Name = Hoplite, Hoplites
+  Type = Hoplite
+  Factions = Greek
+  Prerequisite = 	Barracks: 1000, 	; Minimum barracks level needed
+					Archery Range: 0, 
+					Stable: 0   
+  Cost = 200
+  Salary = 30
+  Speed = 10
+  
+  ;Defence
+  Armor = 3
+  Block = 2
+ 
+  ;Attack
+  Weapon = 3
+  Skill = 2
+  
+  Loyalty = 3
+  
+[Town_Guard]
+  Name = Town Guard, Town Guards
+  Type = Town_Guard
+  Factions = ALL
+  Prerequisite = Barracks: 0
+  Cost = 100
+  Salary = 5
+  Special = yes   ; Separated from other units
+  
+  Speed = 8
+  
+  ;Defence
+  Armor = 0
+  Block = 1
+ 
+  ;Attack
+  Weapon = 0
+  Skill = 1
+  
+  Loyalty = 1
+  
+  

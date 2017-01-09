@@ -1,0 +1,176 @@
+/*  Promathius Style Sheet
+    --------------------------------------------------------------
+	Style name:		Default
+	Style component: Stat Bar
+
+	
+	This is the default style for Promathius.
+	Note that all comments and spaces will be ommited.
+    --------------------------------------------------------------
+*/
+
+div.statheader {
+	Z-index:4;
+	position:relative;
+	display: block;
+	overflow:hidden;
+	background: url(images/gui/mainbar.png) left top no-repeat;
+	font-size: 12px;
+	font-weight: bold;
+	color: #C4C4C4;
+	height:79px;
+}
+/* Turns Icon */
+div.hourglass {
+	display:inline;
+	width:20%;
+	background: url(images/gui/stats/hourglass.png) left top no-repeat;
+	background-position: 1px 9px;
+	
+	float:left;
+	height: 100%;
+}
+#hourglass{
+	float: left;
+	padding-left: 1px;
+	padding-top: 9px;
+	
+	opacity: 0;
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    filter: alpha(opacity=0);
+}
+#turncnt{
+	padding-top:32px;
+	padding-left:1px;
+	
+	display:inline;
+	float:left;
+	font-size: 12px;
+	color: #82807d;
+}
+/* Greatness BG */
+div.statheader-middle {
+	margin-top: -5px;
+	display:inline;
+	float:left;
+	width:33%;
+	text-align:center;
+	font-size: 42px;
+	font-family: Times New Roman;
+	padding-bottom:3px; 
+	font-weight: normal;
+	color: #a7a7a7;
+}
+/* Cash */
+div.cash {
+	background: url(images/gui/stats/cash.png) left top no-repeat;
+	background-position: 28px 44px;
+	padding-left: 60px;
+	padding-top: 44px;
+	
+	font-size: 12px;
+	font-family: Shruti, Verdana;
+	font-weight: normal;
+	color: #82807d;
+	
+	display:inline;
+	width:5%;
+	float:left;
+	height: 100%;
+}
+/* Runes */
+div.runes {
+	background: url(images/gui/stats/runes.png) left top no-repeat;
+	background-position: 8px 44px;
+	padding-left: 36px;
+	padding-top: 44px;
+	
+	font-size: 12px;
+	font-family: Shruti, Verdana;
+	font-weight: normal;
+	color: #82807d;
+	
+	display:inline;
+	width:3%;
+	float:left;
+	height: 100%;
+}
+/* Territory */
+div.land {
+	background: url(images/gui/stats/land.png) left top no-repeat;
+	background-position: 8px 44px;
+	padding-left: 40px;
+	padding-top: 44px;
+	
+	font-size: 12px;
+	font-family: Shruti, Verdana;
+
+	font-weight: normal;
+	color: #82807d;
+	
+	display:inline;
+	width:10%;
+	float:left;
+	height: 100%;
+}
+/* Pulic order Icon */
+div.order {
+	margin-right: -15px;
+	padding-top: 7px;
+	
+	font-size: 11px;
+	font-weight: bold;
+	color: #82807d;
+	
+	display:inline;
+	width:10%;
+	float:right;
+	height: 100%;
+}
+
+/* Advanced Stat Menu */
+#advstat {
+	Z-index:3;
+	position:absolute;
+	margin-top: 30px;
+	margin-left: 135px;
+	width:	427px;
+	/* Height is hardcoded as the dropdown is still buggy
+		height: 260px; */
+	background: url(images/gui/statusbg.png) top left no-repeat;
+}
+/***********************************************/
+/* Advanced stat button */
+#advstatbutton {
+	Z-index:6;
+	display:block;
+	position:absolute;
+	margin-top: -11px;
+	margin-left: 114px;
+	width:	461px;
+	height: 67px;
+	cursor: pointer;
+	background: url(images/gui/statusbut.png) center left no-repeat;
+	background-position: 0px 0px;
+	overflow:auto;
+}
+#advstatbutton:hover {
+	background-position: 0px -85px;
+}
+/**************************************/
+.statusbg {
+	margin-top:16px;
+	color: #bfbfbf;
+	font-size: 10px;
+	height: 292px;
+}
+div.detailed-stats {
+	color: #bfbfbf;
+	font-size: 10px;
+	border-left: solid 0px #000000;
+	border-right: solid 1px #000000;
+	border-top: solid 0px #000000;
+	border-bottom: solid 1px #000000;
+	background: #292929 url(images/gui/table.gif) top left repeat-x;
+}

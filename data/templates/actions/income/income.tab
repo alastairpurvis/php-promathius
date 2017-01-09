@@ -1,0 +1,24 @@
+<table class="invisible" cellspacing=0 cellpadding=0 width=520  style='padding: 0px; margin: 0px'><tr><td>
+{$BeginTabmenu}
+{if $tabsection == "taxes"}
+	{$oTabActive}Taxes{$cTabActive}
+{else}
+	{$oTab}<a class="guitab" href="?income">Taxes</a>{$cTab}
+{/if}
+	
+{if $tabsection == "treasury"}
+	{$oTabActive}Treasury{$cTabActive}
+{else}
+	{$oTab}<a class="guitab" href="?income&tab=treasury">Treasury</a>{$cTab}
+{/if}
+	
+{if $tabsection == "help"}
+	{$oHelpActive}
+{else}
+	{$oHelp}<a class="guitab" href="?income&tab=help"></a>{$cHelp}
+{/if}
+{$EndTabmenu}
+</table>
+<table cellspacing="0" cellpadding="0" width=520 style="padding-bottom:19px" align=center>
+<tr>
+<td class="shlarge" rowspan=2 style="padding-left: 13px; padding-right: 13px; padding-bottom: 19px;padding-top: 10px" align=center>

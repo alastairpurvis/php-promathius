@@ -1,0 +1,36 @@
+=========================
+  How to Install Contrib Installer
+=========================
+
+Require clean osCommerce code:
+  Contrib Installer designed for work with fresh osCommerce code.
+  Without any changes of code and database.
+  So if you have a hard modded shop you can use Contrib Installer
+  but you should do some work to get it working.
+  Because all Contrib Installer Packages written for code that was not modified.
+
+Contrib Installer install yourself.
+
+You should only:
+- copy Contrib Installer's files to right place and
+- open in browser link:     http://<your site>/admin/contrib_installer.php
+
+On this page you could choose a folder where contribs will be stored.
+Change this folder if you want.
+
+ Press "+Install" and Contrib Installer will install yourself.
+
+ You don't see any error-messages at the top of page?
+ It means that self-installation made successfully.
+ In this case you should see a list of contribs in folder that you have choosen before.
+
+Great! Now you can upload a contribs and install/remove them.
+
+ If you have had an errors:
+ - read it,
+ - do nessesary changes,
+ - try again install Contrib Installer or
+ - visit http://cip.net.ua for support and help
+
+ God bless you!
+ Vlad Savitsky (http://cip.net.ua)

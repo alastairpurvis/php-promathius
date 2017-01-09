@@ -1,0 +1,109 @@
+var buttonfaderenabled = true;
+
+function opacity(id, opacStart, opacEnd, millisec) {
+    //speed for each frame
+    var speed = Math.round(millisec / 100);
+    var timer = 0;
+
+    //determine the direction for the blending, if start and end are the same nothing happens
+    if(opacStart > opacEnd) {
+        for(i = opacStart; i >= opacEnd; i--) {
+            setTimeout("changeOpac(" + i + ",'" + id + "')",(timer * speed));
+            timer++;
+        }
+    } else if(opacStart < opacEnd) {
+        for(i = opacStart; i <= opacEnd; i++)
+            {
+            setTimeout("changeOpac(" + i + ",'" + id + "')",(timer * speed));
+            timer++;
+        }
+    }
+}
+
+//change the opacity for different browsers
+function changeOpac(opacity, id) {
+    var object = document.getElementById(id).style;
+    object.opacity = (opacity / 100);
+    object.MozOpacity = (opacity / 100);
+    object.KhtmlOpacity = (opacity / 100);
+    object.filter = "alpha(opacity=" + opacity + ")";
+} 
+
+//////////////////////////////
+// Button Fader
+//////////////////////////////
+var buttonFader={}
+
+buttonFader.baseopacity=0.7 //set base opacity when mouse isn't over element (decimal below 1)
+buttonFader.increment=0.04 //amount of opacity to increase after each iteration (suggestion: 0.1 or 0.2)
+
+document.write('<style type="text/css">\n') //write out CSS to enable opacity on "buttonFader" class
+document.write('.buttonFader{filter:progid:DXImageTransform.Microsoft.alpha(opacity='+buttonFader.baseopacity*100+'); -moz-opacity:'+buttonFader.baseopacity+'; opacity:'+buttonFader.baseopacity+';-khtml-opacity:'+buttonFader.baseopacity+';}\n')
+document.write('</style>')
+
+buttonFader.setopacity=function(obj, value){ //Sets the opacity of targetobject based on the passed in value setting (0 to 1 and in between)
+	var targetobject=obj
+	if (targetobject && targetobject.filters && targetobject.filters[0]){ //IE syntax
+		if (typeof targetobject.filters[0].opacity=="number") //IE6
+			targetobject.filters[0].opacity=value*100
+		else //IE 5.5
+			targetobject.style.filter="alpha(opacity="+value*100+")"
+		}
+	else if (targetobject && typeof targetobject.style.MozOpacity!="undefined") //Old Mozilla syntax
+		targetobject.style.MozOpacity=value
+	else if (targetobject && typeof targetobject.style.opacity!="undefined") //Standard opacity syntax
+		targetobject.style.opacity=value
+	targetobject.currentopacity=value
+}
+
+buttonFader.fadeupdown=function(obj, direction){
+	var targetobject=obj
+	var fadeamount=(direction=="fadeup")? this.increment : -this.increment
+	if (targetobject && (direction=="fadeup" && targetobject.currentopacity<1 || direction=="fadedown" && targetobject.currentopacity>this.baseopacity)){
+		this.setopacity(obj, targetobject.currentopacity+fadeamount)
+		window["opacityfader"+obj._fadeorder]=setTimeout(function(){buttonFader.fadeupdown(obj, direction)}, 50)
+	}
+}
+
+buttonFader.clearTimer=function(obj){
+if (typeof window["opacityfader"+obj._fadeorder]!="undefined")
+	clearTimeout(window["opacityfader"+obj._fadeorder])
+}
+
+buttonFader.isContained=function(m, e){
+	var e=window.event || e
+	var c=e.relatedTarget || ((e.type=="mouseover")? e.fromElement : e.toElement)
+	while (c && c!=m)try {c=c.parentNode} catch(e){c=m}
+	if (c==m)
+		return true
+	else
+		return false
+}
+
+buttonFader.fadeinterface=function(obj, e, direction){
+	if (!this.isContained(obj, e)){
+		buttonFader.clearTimer(obj)
+		buttonFader.fadeupdown(obj, direction)
+	}
+}
+
+buttonFader.collectElementbyClass=function(classname){ //Returns an array containing DIVs with specified classname
+	var classnameRE=new RegExp("(^|\\s+)"+classname+"($|\\s+)", "i") //regular expression to screen for classname within element
+	var pieces=[]
+	var alltags=document.all? document.all : document.getElementsByTagName("*")
+	for (var i=0; i<alltags.length; i++){
+		if (typeof alltags[i].className=="string" && alltags[i].className.search(classnameRE)!=-1)
+			pieces[pieces.length]=alltags[i]
+	}
+	return pieces
+}
+
+buttonFader.init=function(){
+	var targetobjects=this.collectElementbyClass("fade")
+	for (var i=0; i<targetobjects.length; i++){
+		targetobjects[i]._fadeorder=i
+		this.setopacity(targetobjects[i], this.baseopacity)
+		targetobjects[i].onmouseover=function(e){buttonFader.fadeinterface(this, e, "fadeup")}
+		targetobjects[i].onmouseout=function(e){buttonFader.fadeinterface(this, e, "fadedown")}
+	}
+}

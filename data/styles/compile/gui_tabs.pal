@@ -1,0 +1,99 @@
+/*  Promathius Style Sheet
+    --------------------------------------------------------------
+	Style name:		Default
+	Style Component:	Graphical Tabs
+	
+	This is the default style for Promathius.
+	Note that all comments and spaces will be ommited.
+    --------------------------------------------------------------
+*/
+
+/***************************/
+/* Normal Tabs  */
+/***************************/
+/* The Active tab */
+td.ActiveTabItem {
+	background-color: #323232;
+	width: 111px;
+	height: 26px;
+	padding: 0px;
+	text-align: center;
+	font-weight: bold;
+}
+
+/* The Inactive tab */
+td.InactiveTabWidth {
+	width: 98px;
+}
+div.InactiveTabItem {
+	background: url(images/gui/tabs/inactive.gif) top left no-repeat;
+	background-position: 0 0px;
+	vertical-align: middle;
+	width: 98px;
+	height: 21px;
+	padding: 0px;
+	text-align: center;
+	vertical-align: bottom;
+	cursor: default;
+}
+
+/* The Inactive tab when hovered over */
+div.InactiveTabItem:hover {
+	background-position: 0 -21px;
+}
+
+/* The Inactive tab when clicked on */
+div.InactiveTabItem.click {
+	background-position: 0 -43px;
+}
+
+/***************************/
+/* The Help tab */
+/***************************/
+td.ActiveTabHelp {
+	background: url(images/gui/tabs/inactivehelp.png) top left no-repeat;
+	background-position: 2px -75px;
+	vertical-align: middle;
+	width: 31px;
+	height: 26px;
+	padding: 0px;
+	margin-right: 7px;
+	text-align: center;
+	vertical-align: bottom;
+	cursor: default;
+	font-weight: bold;
+}
+
+td.InactiveTabHelp {
+	background: url(images/gui/tabs/inactivehelp.png) top left no-repeat;
+	background-position: 2px 0px;
+	vertical-align: middle;
+	width: 31px;
+	height: 21px;
+	padding: 0px;
+	margin-right: 7px;
+	text-align: center;
+	vertical-align: bottom;
+	cursor: default;
+	font-weight: bold;
+}
+td.InactiveTabHelp:hover {
+	background-position: 2px -21px;
+}
+td.InactiveTabHelp.click {
+	background-position: 2px -43px;
+}
+
+/***************************/
+/* Tab Text Formatiing */
+/***************************/
+a.guitab:link,a.guitab:hover,a.guitab:visited,a.guitab:active {
+	display:block; 
+	padding-top: 4px;
+	vertical-align: middle;
+	text-decoration: none;
+	width: 100%; 
+	height: 17px; 
+	color: #9e9e9e;
+	cursor: default;
+}

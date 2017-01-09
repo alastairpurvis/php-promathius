@@ -1,0 +1,66 @@
+<script type="text/javascript">
+function paste_strinL(strinL){ 
+var input=document.postMsg.elements["postText"];
+input.value=input.value+strinL;
+}
+</script>
+
+<div align=center>
+
+<table class=forums>
+<tr>
+<td width=16 valign=top class=caption3></td>
+<td valign=top class=caption3 style="font-size:12px" width=50%><div class=header>{$forumName}</div></td>
+<td style="text-align:right" valign=top width="100%" class=caption3><span style="font-size:10px"><b>{$l_sortedBy}&nbsp;{$sortedByT}.<br /><i><a href="{$indexphp}action=vtopic&amp;forum={$forum}&amp;sortBy={$sortByNew}">{$l_sortBy}&nbsp;{$sortByT}</a></i></b></span></td>
+</tr>
+</table>
+
+<table class=tbTransparent>
+<tr><td class=tbTransparent><span class=txtSm><b>{$pageNav}</b></span></td></tr>
+</table>
+
+<table class=forums>
+<tr>
+<td width=18 class=caption4 style="font-size:10px">&nbsp;</td>
+<td width="200%" class=caption4 style="font-size:10px"><span style="font-size:10px"><b>{$l_topic}</b></span></td>
+<td width="5%" align=center class=caption4 style="font-size:10px"><span style="font-size:10px"><b>{$l_replies}</b></span></td>
+<td width="5%" align=center class=caption4 style="font-size:10px"><span style="font-size:10px"><b>{$l_views}</b></span></td>
+<td width="15%" align=center class=caption4 style="font-size:10px"><span style="font-size:10px"><b>{$l_author}</b></span></td>
+<td width="15%" align=center class=caption4 style="font-size:10px"><span style="font-size:10px"><b>{$l_posted}</b></span></td>
+</tr>
+
+{$list_topics}
+
+</table>
+
+<table class=tbTransparent>
+<tr><td class=tbTransparent><span class=txtSm><b>{$pageNav}</b></span></td></tr>
+</table>
+
+<a name=newtopic></a>
+<form action="{$indexphp}" name=postMsg method=post class=formStyle>
+<table class=forums>
+<tr height=28>
+<td class=caption2 style="text-align:center; vertical-align:middle;" valign="middle">
+<b>{$l_new_topic}</b></td>
+</tr>
+<tr>
+<td class=caption5>
+<INPUT TYPE=HIDDEN NAME=action VALUE=ptopic>
+<INPUT TYPE=HIDDEN NAME=forum VALUE="{$forum}">
+<span style="font-size: 11px">Subject</span>&nbsp&nbsp<INPUT TYPE=TEXT NAME=topicTitle SIZE=38 MAXLENGTH=32 class=textForm tabindex=1 style="width:65%;">
+</td>
+</tr>
+
+{$mainPostForm}
+
+<tr>
+<td class=catBottom style="text-align:center;">
+<INPUT TYPE=SUBMIT VALUE="{$l_sub_post_tpc}" tabindex=5 class="mainoption">
+</td>
+</tr>
+</table>
+</form>
+</div>
+<br />
+

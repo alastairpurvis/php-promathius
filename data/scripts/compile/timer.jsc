@@ -1,0 +1,78 @@
+		var TurnsAcquired = 0;
+		function updateTurnCount(TurnsAcquired){
+			if (document.all||document.getElementById){
+				var newturns = CurrentTurns + TurnsAcquired;
+				var testt = newturns;
+				if(testt == maxturns){
+					document.getElementById("turncnt").innerHTML=newturns;
+					return true;
+				}
+				else if(testt > maxturns){
+					return true;		
+				}
+				else{
+					document.getElementById("turncnt").innerHTML=newturns;
+					return false;
+				}
+			}
+		}
+		function calcTurns(){
+		var exceededmax = updateTurnCount(TurnsAcquired);
+		if(!exceededmax){
+			if(TimeMinutes < 1 && TimeSeconds < 2)
+			{
+				TurnsAcquired = TurnsAcquired + turnsperx;
+				opacity('hourglass', 100, 0, 800);
+				updateTurnCount(TurnsAcquired);
+				if(!updateTurnCount(TurnsAcquired)){
+					if(perminutes <= 1)
+					{
+						TimeSeconds = perminutes*60;
+						TimeMinutes = 0;
+					}
+					else
+					{
+						TimeSeconds = rawseconds;
+						TimeMinutes = perminutefl;
+					}
+				}
+			}
+			else
+			{
+				if(TimeSeconds < 2)
+				{
+					TimeMinutes = TimeMinutes - 1;
+					TimeSeconds = 60;
+				}
+				else
+					TimeSeconds= TimeSeconds - 1;
+			}
+			if(TimeMinutes == 1)
+				var minutestr = "minute";
+			else
+				var minutestr = "minutes";
+			
+			if(TimeMinutes >= 1)
+				var counter = TimeMinutes + " " + minutestr + " and " + TimeSeconds + " seconds";
+			else
+				var counter = TimeSeconds + " seconds";
+			
+			turnno = "";
+			if(turnsperx > 1)
+				turnno = turnsperx + " ";
+				
+			thetext = "Next " + turnno + turnsform + " in " + counter;
+		}
+		else{
+			thetext = "Maximum " + turnsplural + " accumulated";
+			document.getElementById("turncnt").innerHTML=maxturns;
+		}
+			document.getElementById("ttimer").innerHTML=thetext;
+		}
+	
+		function turntimer(){
+			if (document.all||document.getElementById){
+				new calcTurns();
+				setInterval("calcTurns()",1000);
+			}
+		}

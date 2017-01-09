@@ -1,0 +1,61 @@
+;//////////////////////////////////////////////////////////////////////////////
+;// BUILDINGS.ini
+;//////////////////////////////////////////////////////////////////////////////
+; This file contains all the rules for combat in the game.
+
+; ** Hard-coded buildings **
+[Market]
+	Name = Market
+	Cost = 2
+	Land = 1
+	Income = 200
+
+[Houses]
+	Name = Temple
+	Cost = 5
+	Land = 3
+	PublicOrderBonus = 20
+
+[Garrisons]
+	Name = Garrison
+	Cost = 6
+	Land = 3
+	TroopSlots = 50
+	TroopCosts = -20
+
+; Additional "non-essential" structures
+[Buildings]
+	Number = 1
+	1 = Brovel
+
+[Brovel]
+	Name = Brovel
+	Cost = 2
+	Land = 3
+	Income = 20
+	PublicOrderBonus = -2
+
+
+
+
+
+
+
+;/////////////////////
+;// EPIC STRUCTURES
+;/////////////////////
+
+[EpicBuildings]
+	Number = 2
+	1 = GrandTempleZeus
+	2 = TempleZeus
+	2 = PublicBaths
+
+[GrandTempleZeus]
+	Name = Grand Temple to Zeus
+	Upgrades = TempleZeus
+	Description = BLA
+	PublicOrderBonus = 4
+	BuildTime = 24 ; 24 hours
+	
+	

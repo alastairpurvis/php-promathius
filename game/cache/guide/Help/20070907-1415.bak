@@ -1,0 +1,115 @@
+
+// 2007/09/07 14:15 /  127.0.0.1
+These are some of the rules for formatting in the wiki.
+
+The titles use an exclamation mark !
+! Large
+!! Larger
+!!! Largest
+
+Styles use the simple apostrophe '
+'''Fat'''
+''italic''
+'''''Fat and italic'''''
+
+Underline using ' u '
+'u'Word'u'
+
+The numbered lists uses hash: #
+#First
+#Second
+#Third 
+
+The bulleted lists use star/asterisk *
+* apple
+* pear
+* fish 
+
+For HTML code, and all other coding where the formating is important use these special &quot;squiggely&quot; brackets:
+
+{&lt;font color=red&gt; yes using a different text colour works too &lt;/font&gt;}
+
+The external links and the email addresses are recognised automatially.  
+http://www.rowlff.de/rowiki/
+rowiki@rowlff.de
+
+or through a text between square brackets with a pipe separating the text from the link:
+[Visit the site of roWiki|http://www.rowlff.de/rowiki/]
+
+Links to the wiki-pages use the square brackets:
+[Reception]
+
+If you want a different text for the link description, but want to refer to a wiki page use &quot;|?page=&quot; in front of the wiki page you refer to:
+[The link descrcrition you want|?page=thewikipageyouwanttopointto]
+
+To display an images inserting the URL of an image you want to see and it is automatically displaying the image
+[http://www.chabel.org/scripts/TigerWiki/logo.gif]
+
+An image with link uses again the pipe in front of the URL
+[http://wwww]
+
+
+If a page does not exist, it will be created with the first click on its link.
+Click on ?NewPageCreation? below and you will be able quite simply to write this new page?
+[NewPageCreation]
+
+
+? and to insert lines, use four indents:&quot;----&quot;
+----
+// 2007/09/07 14:15 /  127.0.0.1
+These are some of the rules for formatting in the wiki.
+
+The titles use an exclamation mark !
+! Large
+!! Larger
+!!! Largest
+
+Styles use the simple apostrophe '
+'''Fat'''
+''italic''
+'''''Fat and italic'''''
+
+Underline using ' u '
+'u'Word'u'
+
+The numbered lists uses hash: #
+#First
+#Second
+#Third 
+
+The bulleted lists use star/asterisk *
+* apple
+* pear
+* fish 
+
+For HTML code, and all other coding where the formating is important use these special &quot;squiggely&quot; brackets:
+
+{&lt;font color=red&gt; yes using a different text colour works too &lt;/font&gt;}
+
+The external links and the email addresses are recognised automatially.  
+http://www.rowlff.de/rowiki/
+rowiki@rowlff.de
+
+or through a text between square brackets with a pipe separating the text from the link:
+[Visit the site of roWiki|http://www.rowlff.de/rowiki/]
+
+Links to the wiki-pages use the square brackets:
+[Reception]
+
+If you want a different text for the link description, but want to refer to a wiki page use &quot;|?page=&quot; in front of the wiki page you refer to:
+[The link descrcrition you want|?page=thewikipageyouwanttopointto]
+
+To display an images inserting the URL of an image you want to see and it is automatically displaying the image
+[http://www.chabel.org/scripts/TigerWiki/logo.gif]
+
+An image with link uses again the pipe in front of the URL
+[http://wwww]
+
+
+If a page does not exist, it will be created with the first click on its link.
+Click on ?NewPageCreation? below and you will be able quite simply to write this new page?
+[NewPageCreation]
+
+
+? and to insert lines, use four indents:&quot;----&quot;
+----

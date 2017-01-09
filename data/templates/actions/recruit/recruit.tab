@@ -1,0 +1,24 @@
+<table class="invisible" cellspacing=0 cellpadding=0 width=520  style='padding: 0px; margin: 0px'><tr><td>
+{$BeginTabmenu}
+{if $tabsection == "recruit"}
+	{$oTabActive}Recruit{$cTabActive}
+{else}
+	{$oTab}<a class="guitab" href="?recruit">Recruit</a>{$cTab}
+{/if}
+	
+{if $tabsection == "disband"}
+	{$oTabActive}Disband{$cTabActive}
+{else}
+	{$oTab}<a class="guitab" href="?recruit&tab=disband">Disband</a>{$cTab}
+{/if}
+	
+{if $tabsection == "help"}
+	{$oHelpActive}
+{else}
+	{$oHelp}<a class="guitab" href="?recruit&tab=help"></a>{$cHelp}
+{/if}
+{$EndTabmenu}
+</table>
+<table cellspacing="0" cellpadding="0" width=520>
+<tr>
+<td align="center" class="shlarge" rowspan=2 style="padding-top: 12px; padding-right: 7px; padding-bottom:12px">

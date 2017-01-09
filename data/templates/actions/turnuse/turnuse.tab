@@ -1,0 +1,18 @@
+<table class="invisible" cellspacing=0 cellpadding=0 width=520  style='padding: 0px; margin: 0px'><tr><td>
+{$BeginTabmenu}
+{if $tabsection == "explore"}
+	{$oTabActive}Explore{$cTabActive}
+{else}
+	{$oTab}<a class="guitab" href="?explore">Explore</a>{$cTab}
+{/if}
+	
+{if $tabsection == "help"}
+	{$oHelpActive}
+{else}
+	{$oHelp}<a class="guitab" href="?explore&tab=help"></a>{$cHelp}
+{/if}
+{$EndTabmenu}
+</table>
+<table cellspacing="0" cellpadding="0" width=520>
+<tr>
+<td align="center" class="shlarge" rowspan=2 style="padding-top: 7px; padding-right: 7px">

@@ -1,0 +1,139 @@
+/*  Promathius Style Sheet
+    --------------------------------------------------------------
+	Style name:		Default
+	Style Component:	Side Menu
+	
+	This is the default style for Promathius.
+	Note that all comments and spaces will be ommited.
+    --------------------------------------------------------------
+*/
+div.leftmenu, div.sdmenu2 {
+	font-family: Verdana, sans-serif;
+	font-size: 11px;
+	text-align:left;
+	color: #fff;
+}
+div.leftmenu {
+	display:block;
+	position: relative;
+	top: -26px;
+	
+	width: 234px;
+	height:591px;
+	background: url(images/gui/menu/bg.png) no-repeat left top;
+}
+div.sdmenu2 {
+	display:block;
+	position: relative;
+	left: -3px;
+	top: -15px;
+
+	width: 166px;
+	background: url(images/gui/menu/bottom2.gif) no-repeat right bottom;
+}
+div.leftmenu div, div.sdmenu2 div {
+	overflow: hidden;
+}
+div.leftmenu div.collapsed, div.sdmenu2 div.collapsed {
+	height: 25px;
+}
+div.leftmenu div span, div.sdmenu2 div span {
+	display: block;
+	padding-top: 8px;
+	padding-bottom: 11px;
+	font-weight: bold;
+	font-size: 9px;
+	color: #918b8b;
+	cursor: default;
+}
+div.leftmenu div span {
+	text-align: center;
+	font-family: Times New Roman;
+	padding-bottom: 20px;
+}
+div.sdmenu2 div span {
+	text-align: center;
+	background: url(images/gui/menu/toptitle_shad.gif) no-repeat;
+}
+div.leftmenu div.collapsed span, div.sdmenu2 div.collapsed span {
+	background-position: 0 -44px;
+}
+div.leftmenu div a, div.sdmenu2 div a {
+	padding: 6px 13px;
+	display: block;
+	color: #C49400;
+	cursor: default;
+}
+div.sdmenu2 div a {
+	background: #232323 url(images/gui/menu/sideitemh.png) repeat-y;
+}
+div.leftmenu div a {
+	width: 225px;
+	background: url(images/gui/menu/sideitemh.png) no-repeat;
+}
+div.leftmenu div a, div.leftmenu div p {
+	font-size: 13px;
+	padding: 0px 0px;
+}
+div.leftmenu div p{
+	margin:0px;
+	padding: 0px 0px;
+	display: block;
+	color: #3a3a3a;
+	cursor: default;
+}
+/*div.sdmenu div a.current {}*/
+div.leftmenu div a:hover, div.sdmenu2 div a:hover {
+	background-position: -308px 0;
+	color: #fff;
+	text-decoration: none;
+}
+
+div.leftmenu div a.clickdown{
+	background-position: -533px 0;
+	color: #fff;
+	text-decoration: none;
+}
+#gap{
+padding-top:37px;
+}
+
+/* Icons */
+.icon{
+	width:100%;
+	margin-left: 41px;
+	margin-top: 9px;
+	margin-bottom: 9px;
+}
+.icon td{
+	padding-top: 0px;
+	padding-left: 34px;
+	font-size: 13px;
+}
+.icon.explore, .icon.explore.ac{
+	background: url(images/gui/menu/explore.png) no-repeat;
+}
+.icon.construct, .icon.construct.ac{
+	background: url(images/gui/menu/construct.png) no-repeat;
+}
+.icon.military, .icon.military.ac{
+	background: url(images/gui/menu/military.png) no-repeat;
+}
+.icon.income, .icon.income.ac{
+	background: url(images/gui/menu/income.png) no-repeat;
+}
+.icon.trade, .icon.trade.ac{
+	background: url(images/gui/menu/trade.png) no-repeat;
+}
+.icon.espionage, .icon.espionage.ac{
+	background: url(images/gui/menu/espionage.png) no-repeat;
+}
+.icon.war, .icon.war.ac{
+	background: url(images/gui/menu/war.png) no-repeat;
+}
+.icon.hover{
+	background-position: 0 -34px;
+}
+.icon.explore.ac, .icon.construct.ac, .icon.military.ac, .icon.income.ac, .icon.trade.ac,  .icon.espionage.ac, .icon.war.ac{
+	background-position: 0 -67px;
+}

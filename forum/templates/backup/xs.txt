@@ -1,0 +1,17 @@
+You are allowed to use this phpBB style only if you agree to the following conditions:
+- You cannot remove copyright notices without permission.
+- You cannot use images from this style anywhere else without permission.
+- You can convert this style to another software for your use, but converted style must have full copyrights.
+- You can modify style as much as you want, but you may not remove copyright notices.
+
+This phpBB style was originally designed by Andrei Gordeev (Freestyle XL) with help from Vjacheslav Trushkin (CyberAlien).
+It is currently being updated and supported by Vjacheslav Trushkin (CyberAlien).
+For support and updates visit http://www.stsoftware.biz/
+
+
+xs_update_file = prom
+xs_update_title = Promethius
+xs_update_type = Style
+xs_update_url = http://www.stsoftware.biz/update_xs2.php
+xs_update_version = 1.0.2
+xs_update_item = prom

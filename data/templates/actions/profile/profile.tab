@@ -1,0 +1,24 @@
+<table class="invisible" cellspacing=0 cellpadding=0 width=520  style='padding: 0px; margin: 0px'><tr><td>
+{$BeginTabmenu}
+{if $tabsection == "profile"}
+	{$oTabActive}Profile{$cTabActive}
+{else}
+	{$oTab}<a class="guitab" href="?profile&target={$enemy.num}">Profile</a>{$cTab}
+{/if}
+	
+{if $tabsection == "diplomacy"}
+	{$oTabActive}Diplomacy{$cTabActive}
+{else}
+	{$oTab}<a class="guitab" href="?profile&tab=diplomacy&target={$enemy.num}">Diplomacy</a>{$cTab}
+{/if}
+	
+{if $tabsection == "help"}
+	{$oHelpActive}
+{else}
+	{$oHelp}<a class="guitab" href="?profile&tab=help&target={$enemy.num}"></a>{$cHelp}
+{/if}
+{$EndTabmenu}
+</table>
+<table cellspacing="0" cellpadding="0" width=520>
+<tr>
+<td align="center" class="shlarge" rowspan=2 style="padding-top:16px;padding-bottom:6px">

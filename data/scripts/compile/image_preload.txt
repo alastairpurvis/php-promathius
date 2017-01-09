@@ -1,0 +1,14 @@
+<SCRIPT LANGUAGE="JavaScript">
+<!-- hide from non JavaScript Browsers
+
+Image1= new Image(50,60)
+Image1.src = "toad1.gif"
+
+Image2 = new Image(70,80)
+Image2.src = "toad2.gif"
+
+Image3 = new Image(90,100)
+Image3.src = "toad3.gif"
+
+// End Hiding -->
+</SCRIPT>

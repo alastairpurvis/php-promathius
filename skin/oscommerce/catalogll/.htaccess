@@ -1,0 +1,180 @@
+# $Id: .htaccess 1739 2007-12-20 00:52:16Z hpdl $
+#
+# This is used with Apache WebServers
+#
+# For this to work, you must include the parameter 'Options' to
+# the AllowOverride configuration
+#
+# Example:
+#
+# <Directory "/usr/local/apache/htdocs">
+#   AllowOverride Options
+# </Directory>
+#
+# 'All' with also work. (This configuration is in the
+# apache/conf/httpd.conf file)
+
+# The following makes adjustments to the SSL protocol for Internet
+# Explorer browsers
+
+#<IfModule mod_setenvif.c>
+#  <IfDefine SSL>
+#    SetEnvIf User-Agent ".*MSIE.*" \
+#             nokeepalive ssl-unclean-shutdown \
+#             downgrade-1.0 force-response-1.0
+#  </IfDefine>
+#</IfModule>
+
+# If Search Engine Friendly URLs do not work, try enabling the
+# following Apache configuration parameter
+
+# AcceptPathInfo On
+
+# Fix certain PHP values
+# (commented out by default to prevent errors occuring on certain
+# servers)
+
+# php_value session.use_trans_sid 0
+# php_value register_globals 1
+
+
+# Ultimate SEO URLs BEGIN
+RewriteEngine On
+RewriteBase /
+
+# remove .php; use THE_REQUEST to prevent infinite loops
+RewriteRule Default\.aspx index [R=301]
+RewriteRule ProductOverview\.aspx ranges [NC,R=301]
+RewriteRule Products\.aspx index.php?cPath=21 [NC,R=301]
+RewriteRule NewsArticles\.aspx news [NC,R=301]
+RewriteRule About\.aspx about [NC,R=301]
+RewriteRule Lifestyle\.aspx lifestyle [NC,R=301]
+RewriteRule Contact\.aspx contact_us [NC,R=301]
+RewriteRule SkinSolutions\.aspx skinsolutions\.php [NC,R=301]
+RewriteCond %{THE_REQUEST} ^GET\ (.*)\.php\ HTTP [NC]
+RewriteRule (.*)\.php$ $1 [NC,R=301]
+RewriteRule (.*)\.aspx$ $1 [NC,R=301]
+RewriteRule (.*)\.asp$ $1 [NC,R=301]
+ErrorDocument 404 /index.php
+
+# remove index
+RewriteRule (.*)/index$ $1/ [R=301]
+
+# remove slash if not directory
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} /$
+RewriteRule (.*)/ $1 [NC,R=301]
+
+# add .php to access file, but don't redirect
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteCond %{REQUEST_URI} !/$
+RewriteRule (.*) $1\.php [NC,L]
+
+RewriteCond %{QUERY_STRING} ^options\=(.*)$
+RewriteRule ^(.*)-p-(.*)$ product_info.php?products_id=$2%1
+RewriteRule ^(.*)-p-(.*)$ product_info.php?products_id=$2&%{QUERY_STRING}
+RewriteRule ^(.*)-c-(.*)$ index.php?cPath=$2&%{QUERY_STRING}
+RewriteRule ^(.*)-m-(.*)$ index.php?manufacturers_id=$2&%{QUERY_STRING}
+RewriteRule ^(.*)-pi-(.*)$ popup_image.php?pID=$2&%{QUERY_STRING}
+RewriteRule ^(.*)-t-(.*)$ articles.php?tPath=$2&%{QUERY_STRING}
+RewriteRule ^(.*)-au-(.*)$ articles.php?authors_id=$2&%{QUERY_STRING}
+RewriteRule ^(.*)-a-(.*)$ article_info.php?articles_id=$2&%{QUERY_STRING}
+RewriteRule ^(.*)-pr-(.*)$ product_reviews.php?products_id=$2&%{QUERY_STRING}
+RewriteRule ^(.*)-pri-(.*)$ product_reviews_info.php?products_id=$2&%{QUERY_STRING}
+RewriteRule ^(.*)-i-(.*)$ information.php?info_id=$2&%{QUERY_STRING}
+# BOF: "Extra pages-info box w/ admin" support added by faaliyet
+RewriteRule ^(.*)-pm-([0-9]+)$ info_pages.php?pages_id=$2&%{QUERY_STRING}
+# EOF: "Extra pages-info box w/ admin" support added by faaliyet
+RewriteRule ^(.*)-links-(.*)$ links.php?lPath=$2&%{QUERY_STRING}
+# Added polls and newsdesk
+#RewriteRule ^(.*)-po-([0-9]+)$ pollbooth.php?pollid=$2&%{QUERY_STRING}
+  RewriteRule ^(.*)-n-(.*)$ newsdesk_info.php?newsdesk_id=$2&%{QUERY_STRING}
+  RewriteRule ^(.*)-nc-(.*)$ newsdesk_index.php?newsPath=$2&%{QUERY_STRING}
+  RewriteRule ^(.*)-nri-(.*)$ newsdesk_reviews_info.php?newsdesk_id=$2&%{QUERY_STRING}
+  RewriteRule ^(.*)-nra-(.*)$ newsdesk_reviews_article.php?newsdesk_id=$2&%{QUERY_STRING}
+# BOF: Faqdesk support added by faaliyet
+  RewriteRule ^(.*)-f-(.*)$ faqdesk_info.php?faqdesk_id=$2&%{QUERY_STRING}
+  RewriteRule ^(.*)-fc-(.*)$ faqdesk_index.php?faqPath=$2&%{QUERY_STRING}
+  RewriteRule ^(.*)-fri-(.*)$ faqdesk_reviews_info.php?faqdesk_id=$2&%{QUERY_STRING}
+  RewriteRule ^(.*)-fra-(.*)$ faqdesk_reviews_article.php?faqdesk_id=$2&%{QUERY_STRING}
+# EOF: Faqdesk support added by faaliyet
+# Ultimate SEO URLs END
+
+# Block Bad Bots
+RewriteCond %{HTTP_USER_AGENT} ^BlackWidow [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Bot\ mailto:craftbot@yahoo.com [OR]
+RewriteCond %{HTTP_USER_AGENT} ^ChinaClaw [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Custo [OR]
+RewriteCond %{HTTP_USER_AGENT} ^DISCo [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Download\ Demon [OR]
+RewriteCond %{HTTP_USER_AGENT} ^eCatch [OR]
+RewriteCond %{HTTP_USER_AGENT} ^EirGrabber [OR]
+RewriteCond %{HTTP_USER_AGENT} ^EmailSiphon [OR]
+RewriteCond %{HTTP_USER_AGENT} ^EmailWolf [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Express\ WebPictures [OR]
+RewriteCond %{HTTP_USER_AGENT} ^ExtractorPro [OR]
+RewriteCond %{HTTP_USER_AGENT} ^EyeNetIE [OR]
+RewriteCond %{HTTP_USER_AGENT} ^FlashGet [OR]
+RewriteCond %{HTTP_USER_AGENT} ^GetRight [OR]
+RewriteCond %{HTTP_USER_AGENT} ^GetWeb! [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Go!Zilla [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Go-Ahead-Got-It [OR]
+RewriteCond %{HTTP_USER_AGENT} ^GrabNet [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Grafula [OR]
+RewriteCond %{HTTP_USER_AGENT} ^HMView [OR]
+RewriteCond %{HTTP_USER_AGENT} HTTrack [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} ^Image\ Stripper [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Image\ Sucker [OR]
+RewriteCond %{HTTP_USER_AGENT} Indy\ Library [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} ^InterGET [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Internet\ Ninja [OR]
+RewriteCond %{HTTP_USER_AGENT} ^JetCar [OR]
+RewriteCond %{HTTP_USER_AGENT} ^JOC\ Web\ Spider [OR]
+RewriteCond %{HTTP_USER_AGENT} ^larbin [OR]
+RewriteCond %{HTTP_USER_AGENT} ^LeechFTP [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mass\ Downloader [OR]
+RewriteCond %{HTTP_USER_AGENT} ^MIDown\ tool [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mister\ PiX [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Navroad [OR]
+RewriteCond %{HTTP_USER_AGENT} ^NearSite [OR]
+RewriteCond %{HTTP_USER_AGENT} ^NetAnts [OR]
+RewriteCond %{HTTP_USER_AGENT} ^NetSpider [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Net\ Vampire [OR]
+RewriteCond %{HTTP_USER_AGENT} ^NetZIP [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Octopus [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Offline\ Explorer [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Offline\ Navigator [OR]
+RewriteCond %{HTTP_USER_AGENT} ^PageGrabber [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Papa\ Foto [OR]
+RewriteCond %{HTTP_USER_AGENT} ^pavuk [OR]
+RewriteCond %{HTTP_USER_AGENT} ^pcBrowser [OR]
+RewriteCond %{HTTP_USER_AGENT} ^RealDownload [OR]
+RewriteCond %{HTTP_USER_AGENT} ^ReGet [OR]
+RewriteCond %{HTTP_USER_AGENT} ^SiteSnagger [OR]
+RewriteCond %{HTTP_USER_AGENT} ^SmartDownload [OR]
+RewriteCond %{HTTP_USER_AGENT} ^SuperBot [OR]
+RewriteCond %{HTTP_USER_AGENT} ^SuperHTTP [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Surfbot [OR]
+RewriteCond %{HTTP_USER_AGENT} ^tAkeOut [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Teleport\ Pro [OR]
+RewriteCond %{HTTP_USER_AGENT} ^VoidEYE [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Web\ Image\ Collector [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Web\ Sucker [OR]
+RewriteCond %{HTTP_USER_AGENT} ^WebAuto [OR]
+RewriteCond %{HTTP_USER_AGENT} ^WebCopier [OR]
+RewriteCond %{HTTP_USER_AGENT} ^WebFetch [OR]
+RewriteCond %{HTTP_USER_AGENT} ^WebGo\ IS [OR]
+RewriteCond %{HTTP_USER_AGENT} ^WebLeacher [OR]
+RewriteCond %{HTTP_USER_AGENT} ^WebReaper [OR]
+RewriteCond %{HTTP_USER_AGENT} ^WebSauger [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Website\ eXtractor [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Website\ Quester [OR]
+RewriteCond %{HTTP_USER_AGENT} ^WebStripper [OR]
+RewriteCond %{HTTP_USER_AGENT} ^WebWhacker [OR]
+RewriteCond %{HTTP_USER_AGENT} ^WebZIP [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Wget [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Widow [OR]
+RewriteCond %{HTTP_USER_AGENT} ^WWWOFFLE [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Xaldon\ WebSpider [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Zeus
+RewriteRule .* - [F]

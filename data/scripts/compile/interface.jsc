@@ -1,0 +1,515 @@
+////////////////////////////////////////////////
+// Init scripts
+////////////////////////////////////////////////
+function loadScripts(){
+	loadScroll(); 
+	turntimer();
+	Input.initialize(); 
+}
+function prepareExit(){
+	Turnbox.slideup();
+	closeNoteBox();
+}
+function unloadScripts(){
+	if(typeof saveScroll == 'function'){
+		saveScroll();
+	}
+}
+function footer(){
+	setForm();
+	tabberAutomatic(tabberOptions);
+	styleCheckBox("cb");
+	leftMenu = new SlideMenu("leftmenu");
+	leftMenu.init();
+	rightMenu = new SlideMenu("rightmenu");
+	rightMenu.init(); 
+	clickbuttons();
+	if(typeof buttonfaderenabled != "undefined")
+		buttonFader.init();
+}
+
+////////////////////////////////////////////////
+// NOTIFICATION Animations
+////////////////////////////////////////////////
+
+function openTurnWindow(){
+
+	Turnbox.toggle();
+	setTimeout('opacity("economy", 0, 100, 800)', 750);
+	setTimeout('opacity("population", 0, 100, 800)', 800);
+	setTimeout('opacity("agriculture", 0, 100, 800)', 900);
+	setTimeout('opacity("turnorder", 0, 100, 800)', 925);
+	setTimeout('opacity("turnaction", 0, 100, 800)', 950);
+	setTimeout('opacity("turnresult", 0, 100, 300)', 700);
+}
+function openNoteBox(){
+	Notebox.toggle();
+	opacity("notebox", 0, 100, 1000);
+}
+function closeNoteBox(){
+	opacity('notebox', 100, 0, 100);
+	Notebox.toggle();
+}
+
+
+/////////////
+// Button Clicks
+/////////////
+
+function clickbuttons(){
+		var tabs = document.getElementsByClassName("InactiveTabItem");
+		var helptab = document.getElementsByClassName("InactiveTabHelp");
+		var mainoptions = document.getElementsByClassName("mainoption");
+		writeClick(tabs);
+		writeClick(helptab);
+		writeClick(mainoptions);
+}
+function writeClick(cclass){
+		for (var i = 0; i < cclass.length; i++)
+		{
+				cclass[i].hideFocus = true;
+				var defclass = cclass[i].className;
+				cclass[i].onblur = function()
+				{
+					this.className=defclass; return false;
+				}
+				cclass[i].onmouseup = function()
+				{
+					this.className=defclass; return false;
+				}
+				cclass[i].onmousedown = function()
+				{
+					this.className=defclass+' click'; return true;
+				}
+				cclass[i].onmouseout = function()
+				{
+					this.className=defclass; return false;
+				}
+			}
+}
+document.getElementsByClassName = function(cl) {
+	var retnode = [];
+	var myclass = new RegExp('\\b'+cl+'\\b');
+	var elem = this.getElementsByTagName('*');
+	for (var i = 0; i < elem.length; i++) {
+		var classes = elem[i].className;
+		if (myclass.test(classes)) retnode.push(elem[i]);
+	}
+	return retnode;
+}; 
+
+	
+////////////////////////////////////////////////
+// Statistics Drop-Down
+////////////////////////////////////////////////
+
+function animatedcollapse(divId, animatetime, persistexpand, reset) {
+   this.divId = divId;
+   this.divObj = document.getElementById(divId);
+   this.divObj.style.overflow = "hidden";
+   this.timelength = animatetime;
+   this.isExpanded = animatedcollapse.getCookie('promethius_' + divId);
+   //"yes" or "no", based on cookie value
+   if(this.isExpanded == 'yes') {
+      this.divObj.style.display = '';
+      }
+   this.contentheight = parseInt(this.divObj.style.height);
+   var thisobj = this;
+   if (isNaN(this.contentheight)) {
+      //if no CSS "height" attribute explicitly defined, get DIV's height on window.load
+      animatedcollapse.dotask(window, function() {
+         thisobj._getheight(persistexpand)}
+      , "load");
+      if (!persistexpand || persistexpand && this.isExpanded != "yes") {
+         //Hide DIV (unless persistence is enabled and this DIV should be expanded)
+		 if(reset){
+			this.divObj.style.visibility = "hidden";
+		 }
+         //hide content (versus collapse) until we can get its height
+         }
+      }
+   else if (this.isExpanded != "yes") {
+      //Hide DIV (unless persistence is enabled and this DIV should be expanded)
+      this.divObj.style.height = 0;
+      //just collapse content if CSS "height" attribute available
+      }
+   if (persistexpand) {
+      animatedcollapse.dotask(window, function() {
+         animatedcollapse.setCookie('promethius_' + thisobj.divId, thisobj.isExpanded)}
+      , "unload");
+      }
+   }
+animatedcollapse.prototype._getheight = function(persistexpand, reset) {
+   this.contentheight = this.divObj.offsetHeight;
+   if (!persistexpand || persistexpand && this.isExpanded != "yes") {
+      //Hide DIV (unless persistence is enabled and this DIV should be expanded)
+	 if (!reset) {
+		this.divObj.style.height = 0;
+      //collapse content
+      this.divObj.style.visibility = "visible";
+   this.divObj.style.height = this.contentheight + "px";
+	 }
+      }
+   else //else if persistence is enabled AND this content should be expanded, define its CSS height value so slideup() has something to work with
+   this.divObj.style.height = this.contentheight + "px";
+   }
+animatedcollapse.prototype._slideengine = function(direction) {
+   var elapsed = new Date().getTime() - this.startTime;
+   //get time animation has run
+   var thisobj = this;
+   if (elapsed < this.timelength) {
+      //if time run is less than specified length
+      var distancepercent = (direction == "down") ? animatedcollapse.curveincrement(elapsed / this.timelength) : 1 - animatedcollapse.curveincrement(elapsed / this.timelength);
+	  this.divObj.style.height = distancepercent * this.contentheight + "px";
+      this.runtimer = setTimeout(function() {
+         thisobj._slideengine(direction)}
+      , 10);
+      }
+   else {
+      //if animation finished
+      this.divObj.style.height = (direction == "down") ? this.contentheight + "px" : 0;
+      this.isExpanded = (direction == "down") ? "yes" : "no";
+      //remember whether content is expanded or not
+      this.runtimer = null;
+      }
+   }
+animatedcollapse.prototype.slidedown = function() {
+   if (typeof this.runtimer == "undefined" || this.runtimer == null) {
+      //if animation isn't already running or has stopped running
+      if (isNaN(this.contentheight)) //if content height not available yet (until window.onload)
+      alert("Please wait until document has fully loaded then click again");
+      else if (parseInt(this.divObj.style.height) == 0) {
+         //if content is collapsed
+         this.startTime = new Date().getTime();
+         //Set animation start time
+         this._slideengine("down");
+         this.divObj.style.display = '';
+         }
+      }
+   }
+animatedcollapse.prototype.slideup = function() {
+   if (typeof this.runtimer == "undefined" || this.runtimer == null) {
+      //if animation isn't already running or has stopped running
+      if (isNaN(this.contentheight)) //if content height not available yet (until window.onload)
+      alert("Please wait until document has fully loaded then click again");
+      else if (parseInt(this.divObj.style.height) == this.contentheight) {
+         //if content is expanded
+         this.startTime = new Date().getTime();
+         this._slideengine("up");
+         }
+      }
+   }
+   // Toggle function
+animatedcollapse.prototype.toggle = function() {
+   if (parseInt(this.divObj.style.height) == 0) {
+      this.slidedown();
+      }
+   else if (parseInt(this.divObj.style.height) == this.contentheight) {
+      this.slideup();
+      }
+   }
+// -------------------------------------------------------------------
+// A few utility functions below:
+// -------------------------------------------------------------------
+animatedcollapse.curveincrement = function(percent) {
+   return (1 - Math.cos(percent * Math.PI)) / 2;
+   //return cos curve based value from a percentage input
+   }
+animatedcollapse.dotask = function(target, functionref, tasktype) {
+   //assign a function to execute to an event handler (ie: onunload)
+   var tasktype = (window.addEventListener) ? tasktype : "on" + tasktype;
+   if (target.addEventListener) target.addEventListener(tasktype, functionref, false);
+   else if (target.attachEvent) target.attachEvent(tasktype, functionref);
+   }
+animatedcollapse.getCookie = function(Name) {
+   var re = new RegExp(Name + "=[^;]+", "i");
+   //construct RE to search for target name/value pair
+   if (document.cookie.match(re)) //if cookie found
+   return document.cookie.match(re)[0].split("=")[1];
+   //return its value
+   return ""}
+animatedcollapse.setCookie = function(name, value, days) {
+   if (typeof days != "undefined") {
+      //if set persistent cookie
+      var expireDate = new Date();
+      var expstring = expireDate.setDate(expireDate.getDate() + days);
+      document.cookie = name + "=" + value + "; expires=" + expireDate.toGMTString();
+      }
+   else //else if this is a session only cookie
+   document.cookie = name + "=" + value;
+   }
+// <![CDATA[
+function updateAtkNames() {
+   var msgnum = document.atksel.target.value;
+   for (i = 0; i < document.atksel.target_num.options.length; ++i) {
+      if (document.atksel.target_num.options[i].value == msgnum) document.atksel.target_num.options[i].selected = true;
+      }
+   }
+function updateAtkNums() {
+   document.atksel.target.value = document.atksel.target_num.value;
+   }
+function updatemissionNames() {
+   var msgnum = document.missionsel.target.value;
+   for (i = 0; i < document.missionsel.target_num.options.length; ++i) {
+      if (document.missionsel.target_num.options[i].value == msgnum) document.missionsel.target_num.options[i].selected = true;
+      }
+   }
+function updatemissionNums() {
+   document.missionsel.target.value = document.missionsel.target_num.value;
+   }
+function updateAllNames() {
+   updateAtkNames();
+   updatemissionNames();
+   }
+var myMenu;
+window.onload = function() {
+   updateAllNames;
+   Input.initialize();
+   }
+function updateMsgNames() {
+   msgnum = document.frmmsg.msg_dest_num.value;
+   nchanged = true;
+   for (i = 0; i < document.frmmsg.msg_dest.options.length; i++) {
+      if (document.frmmsg.msg_dest.options[i].value == msgnum) {
+         document.frmmsg.msg_dest.options[i].selected = true;
+         nchanged = false;
+         }
+      }
+   }
+function updateMsgNums() {
+   document.frmmsg.msg_dest_num.value = document.frmmsg.msg_dest.value;
+   }
+function disableCheckbox(item) {
+	item2 = "document.diplo." + item;
+	item2.checked = false;
+	itemlayer2 = item + 'Opt';
+	document.getElementById(itemlayer2).style.display = "none";
+}
+///////////
+// DIPLOMACY.TPL stuff
+//////////
+function toggleDiplomacyOption(it,item,itcheck) {
+	if (item.checked)
+	{
+		vis = "";
+	}
+	else
+	{
+		itcheck.checked = false;
+		document.getElementById('CC_checkbox'+ getRealId(itcheck.id)).style.backgroundPosition = "left top";
+		vis = "none";
+	}
+	document.getElementById(it).style.display = vis;
+}
+function toggleDiplomacyOptionReverse(itx,itemx,itcheckx) {
+	if (!itemx.checked)
+	{
+		vis = "";
+	}
+	else
+	{
+		itcheckx.checked = false;
+		document.getElementById('CC_checkbox'+ getRealId(itcheckx.id)).style.backgroundPosition = "left top";
+		vis = "none";
+	}
+	document.getElementById(itx).style.display = vis;
+}
+function initCurrencyDialog(){
+		document.write('<form name="gold_demand_form" onsubmit="return validateGold()" action="#" ><div id="goldbox_demand" style="text-align:center;display:none"><br><br><b>How much gold do you demand?</b><br><br><input type="text" name="gold_demand_dialog" size="7" max="10" maxlength="8" autocomplete="off" value=""><br><br><input type="button" name="" value="Make Demand" class="mainoption" onclick="if(document.gold_demand_form.gold_demand_dialog.value > 0) {updateGoldDemand(currency, mony_prefix);document.getElementById(' + "'diplomacybox'" + ').style.display = ' + "''" + ';document.getElementById(' + "'goldbox_demand'" + ').style.display = ' + "'none'" + ';document.diplo.do_diplomacy.style.display = ' + "''" + ';}"><br></div></form>');
+		document.write('<form name="gold_offer_form" onsubmit="return validateGold()" action="#" ><div id="goldbox_offer" style="text-align:center;display:none"><br><br><b>How much gold do you wish to offer?</b><br><br><input type="text" name="gold_offer_dialog" size="7" max="10" maxlength="8" autocomplete="off" value=""><br><br><input type="button" name="" value="Make Offer" class="mainoption" onclick="if(document.gold_offer_form.gold_offer_dialog.value > 0 && document.gold_offer_form.gold_offer_dialog.value < maxmoney){updateGoldOffer(currency, mony_prefix);document.getElementById(' + "'diplomacybox'" + ').style.display = ' + "''" + ';document.getElementById(' + "'goldbox_offer'" + ').style.display = ' + "'none'" + ';document.diplo.do_diplomacy.style.display = ' + "''" + ';}"><br></div></form>');
+}
+function checkboxGoldDemand(){
+	if(document.diplo.gold_demand1.checked)
+	{
+		if( !document.diplo.gold_demand_real.value)
+		{
+			document.getElementById('diplomacybox').style.display = 'none';
+			document.diplo.do_diplomacy.style.display = 'none';
+			document.getElementById('goldbox_demand').style.display = '';
+			disableGoldeOff(currency)
+		}
+	}
+	else
+	{
+		document.diplo.gold_demand_real.value = ''; 
+		document.gold_demand_form.gold_demand_dialog.value = '';
+		updateGoldDemand(currency, mony_prefix); 
+		document.getElementById('gofferchbox').style.display = '';
+	}
+}
+function checkboxGoldOffer(){
+	if(document.diplo.gold_offer1.checked)
+	{
+		if( !document.diplo.gold_offer_real.value)
+		{
+			document.getElementById('diplomacybox').style.display = 'none';
+			document.diplo.do_diplomacy.style.display = 'none';
+			document.getElementById('goldbox_offer').style.display = '';
+			disableGoldeDem(currency)
+		}
+	}
+	else
+	{
+		document.diplo.gold_offer_real.value = '';
+		document.gold_offer_form.gold_offer_dialog.value = '';
+		updateGoldOffer(currency, mony_prefix);
+		document.getElementById('gdemandchbox').style.display = '';
+	}
+}
+function checkboxEndWar(){
+	toggleDiplomacyOption("allianceOpt",document.diplo.end_war,document.diplo.alliance); 
+	toggleDiplomacyOption("trade_rightsOpt",document.diplo.end_war,document.diplo.trade_rights); 
+	if(!document.diplo.end_war.checked)
+	{
+		toggleDiplomacyOption("military_rightsOpt",document.diplo.end_war,document.diplo.military_rights); 
+		document.getElementById("military_rightsOpt").style.display = "none";
+	}
+}
+// Check allow diplomacy?
+function checkboxAllowDiplomacy(){
+	if(document.diploctrl.allow_diplomacy.checked)
+	{
+		document.getElementById('declare_bt').style.display = '';
+		document.getElementById('diplomacybox').style.display = 'none';
+	} 
+	if(!document.diploctrl.allow_diplomacy.checked)
+	{
+		document.getElementById('declare_bt').style.display = 'none';
+		document.getElementById('diplomacybox').style.display = '';
+	}
+}
+// Check prohibit diplomacy?
+function checkboxProhibitDiplomacy(){
+	if(document.diploctrl.prohibit_diplomacy.checked)
+	{
+		document.getElementById('declare_bt').style.display = '';
+		document.getElementById('diplomacybox').style.display = 'none';
+	} 
+	if(!document.diploctrl.prohibit_diplomacy.checked)
+	{
+		document.getElementById('declare_bt').style.display = 'none';
+		document.getElementById('diplomacybox').style.display = '';
+	}
+}
+//Check End Military agreement?
+function checkboxEndMilitary(){
+	if(document.diploctrl.end_military.checked)
+	{
+		document.getElementById('declare_bt').style.display = '';
+		document.getElementById('diplomacybox').style.display = 'none';
+	} 
+	if(document.diploctrl.end_alliance.checked)
+	{
+		document.diploctrl.end_military.checked = true;
+		document.getElementById('CC_checkbox'+ getRealId(document.diploctrl.end_military.id)).style.backgroundPosition = "0 -" + CC_coordClick + "px";
+	}
+	if(!document.diploctrl.end_alliance.checked && !document.diploctrl.end_trade.checked && !document.diploctrl.end_military.checked)
+	{
+		document.getElementById('declare_bt').style.display = 'none';
+		document.getElementById('diplomacybox').style.display = '';
+	}
+}
+// Check End trade?
+function checkboxEndTrade(){
+	if(document.diploctrl.end_trade.checked)
+	{
+		document.getElementById('declare_bt').style.display = '';
+		document.getElementById('diplomacybox').style.display = 'none';
+	} 
+	if(!document.diploctrl.end_alliance.checked && !document.diploctrl.end_trade.checked && !document.diploctrl.end_military.checked)
+	{
+		document.getElementById('declare_bt').style.display = 'none';
+		document.getElementById('diplomacybox').style.display = '';
+	}
+}
+// Check End alliance?
+function checkboxAlliance(){
+	if(document.diploctrl.end_alliance.checked)
+	{
+		document.getElementById('declare_bt').style.display = '';
+		document.getElementById('diplomacybox').style.display = 'none';
+		if(milagree)
+		{
+			document.diploctrl.end_military.checked = true;
+			document.getElementById('CC_checkbox'+ getRealId(document.diploctrl.end_military.id)).style.backgroundPosition = "0 -" + CC_coordClick + "px";
+		}
+	} 
+	if(!document.diploctrl.end_trade.checked && !document.diploctrl.end_alliance.checked && !document.diploctrl.end_military.checked)
+	{
+		document.getElementById('declare_bt').style.display = 'none';
+		document.getElementById('diplomacybox').style.display = '';
+	}
+}
+function validateGold(){
+	return false;
+}
+		function disableGoldeOff(money){
+			document.diplo.gold_offer1.checked = false;
+			document.getElementById('CC_checkbox'+ getRealId(document.diplo.gold_offer1.id)).style.backgroundPosition = "left top";
+			document.diplo.gold_offer_real.value = '';
+			document.gold_offer_form.gold_offer_dialog.value = '';
+			var updateredit = document.getElementById('edit_goffer');
+			updateredit.innerHTML = "";	
+			var updatero = document.getElementById('gold_offer_display');
+			updatero.innerHTML = money;
+			document.getElementById('gofferchbox').style.display = 'none';
+		}
+		function disableGoldeDem(money){
+			document.diplo.gold_demand1.checked = false;
+			document.getElementById('CC_checkbox'+ getRealId(document.diplo.gold_demand1.id)).style.backgroundPosition = "left top";
+			document.diplo.gold_demand_real.value = '';
+			document.gold_demand_form.gold_demand_dialog.value = '';
+			var updateredit = document.getElementById('edit_gdemand');
+			updateredit.innerHTML = "";	
+			var updaterd = document.getElementById('gold_demand_display');
+			updaterd.innerHTML = money;
+			document.getElementById('gdemandchbox').style.display = 'none';
+		}
+		
+		function updateGoldDemand(money, prefix){
+		var updaterd = document.getElementById('gold_demand_display');
+		theval = '';
+		if(document.gold_demand_form.gold_demand_dialog.value)
+			theval = parseFloat(document.gold_demand_form.gold_demand_dialog.value);
+		updaterd.innerHTML = prefix + theval + money;
+		var updateredit = document.getElementById('edit_gdemand');
+		if(document.gold_demand_form.gold_demand_dialog.value){
+		updateredit.innerHTML = "<a style='cursor: pointer' onclick=" + '"' + "if(document.diplo.gold_demand1.checked){document.getElementById('diplomacybox').style.display = 'none';document.getElementById('goldbox_demand').style.display = '';}" + '"' + ">(edit)</a>";
+		}
+		else
+		{
+			updateredit.innerHTML = "";
+		}
+			document.diplo.gold_demand_real.value = theval;
+		}
+		function updateGoldOffer(money, prefix){
+		var updatero = document.getElementById('gold_offer_display');
+		theval = '';
+		if(document.gold_offer_form.gold_offer_dialog.value)
+			theval = parseFloat(document.gold_offer_form.gold_offer_dialog.value);
+		updatero.innerHTML = prefix + theval + money;
+		var updateredit = document.getElementById('edit_goffer');
+		if(document.gold_offer_form.gold_offer_dialog.value){
+		updateredit.innerHTML = "<a style='cursor: pointer' onclick=" + '"' + "if(document.diplo.gold_offer1.checked){document.getElementById('diplomacybox').style.display = 'none';document.getElementById('goldbox_offer').style.display = '';}" + '"' + ">(edit)</a>";
+		}
+		else
+		{
+			updateredit.innerHTML = "";
+		}
+			document.diplo.gold_offer_real.value = theval;
+		}
+///////////////
+
+function checkAll (check) {
+   var path = document.frmmsg;
+   for (var i = 0; i < path.elements.length; i++) {
+      e = path.elements[i];
+      checkname = "maxall";
+      if(check == 2) checkname = "maxall2";
+      if( (e.name != checkname) && (e.type == "checkbox") && (e.name != "hide_turns") ) {
+         e.checked = path.maxall.checked;
+         if(check == 2) e.checked = path.maxall2.checked;
+         }
+      }
+   }
+// ]]>

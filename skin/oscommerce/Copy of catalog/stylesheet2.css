@@ -1,0 +1,460 @@
+﻿.boxText { font-family: Verdana, Arial, sans-serif; font-size: 10px; }
+.errorBox { font-family : Verdana, Arial, sans-serif; font-size : 10px; background: #ffb3b5; font-weight: bold; }
+.stockWarning { font-family : Verdana, Arial, sans-serif; font-size : 10px; color: #cc0033; }
+.productsNotifications { background: #f2fff7; }
+.orderEdit { font-family : Verdana, Arial, sans-serif; font-size : 10px; color: #70d250; text-decoration: underline; }
+
+/* message box */
+
+.messageBox { font-family: Verdana, Arial, sans-serif; font-size: 10px; }
+.messageStackError, .messageStackWarning { font-family: Verdana, Arial, sans-serif; font-size: 10px; background-color: #ffb3b5; }
+.messageStackSuccess { font-family: Verdana, Arial, sans-serif; font-size: 10px; background-color: #99ff00; }
+
+
+body
+{
+	background-image: url('images/bg.jpg');
+	background-repeat: repeat-x;
+	background-position: top;
+	background-color: #ffffff;
+	margin: 0px;
+	font-family: Arial;
+}
+
+input, select, textarea
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+}
+
+
+.SearchBox
+{
+	border: 1px solid #cccccc;
+	height: 24px;
+	padding-left:4px;
+	padding-top: 3px;
+	line-height: 17px;
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+}
+.SearchBox:hover, .SearchBox:active, .SearchBox:focus
+{
+	background-color:  #dddddd;
+	border: 1px solid #bbbbbb;
+}
+
+h1
+{
+	font-family: Arial;
+	font-size: 16px;
+	color: #5fa9ca;	
+}
+
+h1 a
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #bababc;	
+	line-height: 19px;
+}
+
+h2
+{
+	font-family: Arial;
+	font-size: 14px;
+	color: #57565b;	
+}
+
+h3
+{
+	font-family: Arial;
+	font-size: 12px;
+	color: #5fa9ca;	
+	text-transform: uppercase;
+}
+
+ul
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+	line-height: 16px;
+	margin-left: 0px;
+	padding-left: 16px;
+}
+
+ul.plus li
+{
+	list-style-image: url('../}images/bullet.gif');
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+	line-height: 18px;
+	margin-left: 0px;
+	padding-left: 7px;
+}
+
+ul.plus li span
+{
+	font-size: 9px;
+}
+
+ul.subnav
+{	
+	list-style-type: none;
+	margin-left: 0px;
+	padding-left: 0px;
+}
+
+ul.subnav li
+{	
+	padding-left: 10px;
+	line-height: 25px;
+}
+
+ul.subnav li a.off
+{	
+	text-decoration: none;
+	color: #57565b;
+}
+
+ul.subnav li a.off:hover
+{	
+	text-decoration: none;
+	color: #5fa9ca;
+}
+
+ul.subnav li a.on
+{	
+	text-decoration: none;
+	color: #5fa9ca;
+}
+
+ul.subnav li.title
+{	
+	line-height: 35px;
+	font-weight: bold;
+	border-bottom: 1px solid #5fa9ca;
+}
+
+p
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+	line-height: 16px;
+}
+
+.homeNews
+{
+	background-color: #f0f0f1;
+	padding: 2px 5px 2px 5px;
+	margin-bottom: 3px;
+}
+
+.homeNews a
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+}
+
+.homeNews a:hover
+{
+	color: #5fa9ca;
+}
+
+.grid th
+{
+	background-color: #dddddd;
+	font-family: Arial;
+	font-size: 12px;
+	font-weight: bold;
+	text-align: left;
+}
+
+.grid td
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+	line-height: 16px;
+	border-top: 1px solid #dddddd;
+}
+
+.default, div
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+	line-height: 16px;
+}
+
+p a
+{
+	color: #57565b;
+	text-decoration: underline;
+}
+
+p a:hover
+{
+	color: #5fa9ca;
+	text-decoration: underline;
+}
+
+strong.title
+{
+	font-family: Arial;
+	font-size: 16px;
+	color: #5fa9ca;	
+}
+
+.subnavTitle
+{
+	height: 29px;
+	padding-left: 20px;
+	padding-top: 5px;
+	background-image: url('images/subnav/titlebg.gif');
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+	font-weight: bold;
+}
+
+.subnavMain
+{
+	background-image: url('images/subnav/main.gif');
+}
+
+.subnavMainOff
+{
+	width: 193px;
+	padding: 5px 5px 5px 20px;
+	background-image: url('images/subnav/main.gif');
+}
+
+.Sub
+{
+
+}
+
+.sideNavMainLink
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+	text-decoration: none;
+}
+
+.subnavMainOver
+{
+	width: 193px;
+	padding: 5px 5px 5px 20px;
+	background-image: url('images/subnav/overstate.gif');
+}
+
+
+.topNav
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+	padding: 3px;
+	line-height: 23px;
+}
+
+a.topNav
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+	padding: 3px;
+	line-height: 23px;
+	text-decoration: none;
+}
+
+a.topNav:hover
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+	line-height: 23px;
+	padding: 3px;
+	background-color: #e8e9ea;
+	text-decoration: none;
+}
+
+a.topNavOn
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #5fa9ca;
+	padding: 3px;
+	background-color: #e8e9ea;
+	text-decoration: none;
+}
+
+#mainDiv
+{
+	position: relative; 
+	
+	width: 100%; 
+	background-position: center; 
+	background-repeat: repeat-y; 
+	background-image: url('images/mainbg.gif');
+}
+
+#mainTable
+{
+	position: relative; 
+	width: 100%; 
+	background-position: top center; 
+	background-repeat: no-repeat; 
+	background-image: url('images/headerbg.jpg');
+}
+
+.rightNav
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+	line-height: 18px;
+}
+
+.rightNav div
+{
+	padding: 7px;
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+	background-color: #e8e9ea;
+	line-height: 14px;
+}
+
+.rightNav a.inactive
+{
+	color: #57565b;
+	text-decoration: none;
+}
+
+.rightNav a.inactive:hover
+{
+	color: #5fa9ca;
+	text-decoration: none;
+}
+
+.rightNav a.active
+{
+	color: #5fa9ca;
+	text-decoration: none;
+}
+
+.header
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #5fa9ca;
+}
+
+.price
+{
+	font-family: Arial;
+	font-size: 16px;
+	font-weight: lighter;
+	color: #5fa9ca;
+}
+
+.header a
+{
+	color: #5fa9ca;
+	text-decoration: none;
+}
+
+.header a:hover
+{
+	color: #5fa9ca;
+	text-decoration: underline;
+}
+
+.footer
+{
+	margin-top: 6px;
+	font-family: Arial;
+	font-size: 10px;
+	color: #57565b;
+}
+
+/* LIBRARY STUFF */
+
+.LibraryNavStrip
+{
+	background-color: #bababc;
+	padding: 10px;
+	color: #ffffff;
+	font-size: 11px;
+	font-family: Arial;
+}
+
+
+.treeNav
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+}
+
+a.treeNav
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+	text-decoration: none;
+}
+
+a.treeNav:hover
+{
+	font-family: Arial;
+	font-size: 11px;
+	color: #57565b;
+	text-decoration: underline;
+}
+
+#slider{}	
+#slider ul
+{
+	margin:0;
+	padding:0;
+	list-style:none;
+} 
+
+#slider li{
+	
+	}
+#slider li{ 
+	width:190px;
+	height:140px;
+	overflow:hidden; 
+	}	
+#prevBtn, #nextBtn{ 
+	display:none;
+	width:30px;
+	height:77px;
+	position:absolute;
+	left:-30px;
+	top:71px;
+	}	
+#nextBtn{ 
+	left:696px;
+	}														
+#prevBtn a, #nextBtn a{  
+	display:block;
+	width:30px;
+	height:77px;
+	
+	}	
+#nextBtn a{ 
+	
+	}	
