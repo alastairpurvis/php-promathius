@@ -9,13 +9,13 @@ Basic structure
 ---------------
 ```
 ├── data
-│   └── includes contains javascript front-end code
-│   └── ini contains game configuration
-│   └── scripts includes customized events using simplifed class-based language
-│   └── styles contains all CSS stylesheets
-│   └── templates contains all HTML files
+│   └── "includes" contains javascript front-end code
+│   └── "ini" contains game configuration
+│   └── "scripts" includes customized events using simplifed class-based language
+│   └── "styles" contains all CSS stylesheets
+│   └── "templates" contains all HTML files
 │   └── images
-│   └── guide contains lightweight .wik files for help feature
+│   └── "guide" contains lightweight .wik files for help feature
 ├── forum
 │   ├── phpBB2 files
 ├── game
@@ -27,5 +27,5 @@ Basic structure
 │   └── game configuration cache
 │   └── shared libraries
 ├── config.php
-│   └── essential database variables
+│   └── essential database configuration
 ```
