@@ -1,0 +1,38 @@
+html, body {
+	padding: 4px 4px 4px 4px;
+	margin: 0;
+	color: #D0D0D0;
+	scrollbar-face-color: #212121;
+	scrollbar-highlight-color: #404040;
+	scrollbar-shadow-color: #000000;
+	scrollbar-3dlight-color: #616161;
+	scrollbar-arrow-color:  #A1A1A1;
+	scrollbar-track-color: #000000;
+	scrollbar-darkshadow-color: #000000;
+}
+body { padding: 0 0px;}
+
+/* General font families for common tags */
+font,th,td,p { font-family: Verdana, Arial, Helvetica, sans-serif; }
+a, a:visited { color: #C49400; }
+a:hover		{ text-decoration: underline; color: #FFFFFF; }
+hr	{ height: 0px; border: solid #C49400 0px; border-top-width: 1px;}
+form { display: inline; padding: 0; margin: 0; }
+img { border: 0; }
+br.spacer { height: 5px; font-size: 5px; line-height: 5px; overflow: hidden; }
+caption { margin: 0; padding: 0; }
+iframe { border: none; background-color: #000; }
+
+
+/* Main table cell colours and backgrounds */
+td.row1, td.row2, td.row3, td.row3Right, td.postbottom {
+	background: #262626 url(images/cell.gif) top left repeat-x;
+}
+/* General text */
+.gen { font-size: 12px; }
+.genmed { font-size: 11px; }
+.gensmall { font-size: 10px; }
+.gentiny { font-size: 9px; }
+.gen,.genmed,.gensmall, gentiny { color: #D0D0D0; }
+a.gen,a.genmed,a.gensmall, a.gentiny { color: #C49400; text-decoration: none; }
+a.gen:hover,a.genmed:hover,a.gensmall:hover,a.gentiny:hover	{ color: #FFFFFF; text-decoration: underline; }

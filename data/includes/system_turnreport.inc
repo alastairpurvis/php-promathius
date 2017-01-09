@@ -1,0 +1,3 @@
+SCRIPT 'LackOfFood':
+
+END;

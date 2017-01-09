@@ -1,0 +1,186 @@
+<?
+// Check that the script is not being accessed directly
+if ( !defined('PROMATHIUS') )
+{
+	die("Hacking attempt");
+}
+/**
+* expects args:
+* num, type, hide
+**/
+function use_turns($args)
+{
+    global $users, $tpl, $ad, $suffix, $actiontype, $page, $menustat, $domessage, $type;
+
+    $num = $args[num];
+    $type = "none";
+    if (isset($args[type]))
+        $type = $args[type];
+    $type = $args[type];
+    $hide = false;
+    if (isset($args[hide]))
+        if ($args[hide])
+            $hide = true;
+
+    fixInputNum($num);
+
+    if ($num > $users[turns])
+    {
+        // Load the game graphical user interface
+initGUI();
+        if ($type == "land")
+        {
+            if (isset($_POST['do_use']) && $use_turns != 0)
+            {
+                $msg = fn_land(array(num => $use_turns, hide => $hide_turns));
+                $tpl->assign('message', $msg);
+            }
+        }
+        else if ($type == 'industry')
+        {
+            if (isset($_POST['do_use']) && $use_turns != 0)
+            {
+                $msg = fn_ind(array(num => $use_turns, hide => $hide_turns));
+                $tpl->assign('message', $msg);
+				$tpl->assign('special', true);
+            }
+        }
+        else if ($type == 'farm')
+        {
+            if (isset($_POST['do_use']) && $use_turns != 0)
+            {
+                $msg = fn_forage(array(num => $use_turns, hide => $hide_turns));
+                $tpl->assign('message', $msg);
+				$tpl->assign('special', true);
+            }
+        }
+        else if ($type == 'cash')
+        {
+            if (isset($_POST['do_use']) && $use_turns != 0)
+            {
+                $msg = fn_cash(array(num => $use_turns, hide => $hide_turns));
+                $tpl->assign('message', $msg);
+				$tpl->assign('special', true);
+            }
+        }
+        else if ($type == 'runes')
+        {
+            if (isset($_POST['do_use']) && $use_turns != 0)
+            {
+                $msg = fn_rune(array(num => $use_turns, hide => $hide_turns));
+                $tpl->assign('message', $msg);
+				$tpl->assign('special', true);
+            }
+        }
+        else if ($type == 'heal')
+        {
+            if (isset($_POST['do_use']) && $use_turns != 0)
+            {
+                $msg = fn_rune(array(num => $use_turns, hide => $hide_turns));
+                $tpl->assign('message', $msg);
+				$tpl->assign('special', false);
+            }
+        }
+		if ($type == 'runes' ||$type == 'farm' ||$type == 'cash' ||$type == 'industry')
+		   $tpl->assign('special', true);
+		$tpl->assign('err', "You don't have enough turns.");
+		$tpl->assign('admessage', $ad);
+		$tpl->assign('turntype', $action);
+		$tpl->assign('doingwhat', $suffix);
+		$tpl->assign('domessage', $domessage);
+		$tpl->assign('buttontext', $button);
+		$tpl->assign('menustat', $menustat);
+		$tpl->display($page);
+		endScript("");
+    }
+if ($num < 0)
+    endScript("You can't use a negative amount of turns!");
+$used = takeTurns($num, $type, $hide);
+return $used;
+}
+
+function fn_forage($args)
+{
+$args[type] = 'farm';
+$tused = use_turns($args);
+
+global $foodgained;
+$foodgained = gamefactor($foodgained);
+if($tused > 1)
+	$turns = 'turns';
+elseif($tused == 1)
+	$turns = 'turn';
+return sprintf("~ You " . ($foodgained >= 0 ? "produced" : "lost") .
+    " %s food in %s ".$turns." ~", substr(commas($foodgained), ($foodgained >= 0 ? 0 : 1)),
+    $tused);
+}
+
+function fn_cash($args)
+{
+$args[type] = 'cash';
+$tused = use_turns($args);
+
+global $cashgained;
+$cashgained = gamefactor($cashgained);
+if($tused > 1)
+	$turns = 'turns';
+elseif($tused == 1)
+	$turns = 'turn';
+return sprintf("~ You " . ($cashgained >= 0 ? "earned" : "lost") . " %s gold in %s ".$turns." ~",
+    substr(commas($cashgained), ($cashgained >= 0 ? 0 : 1)), $tused);
+}
+
+function fn_rune($args)
+{
+$args[type] = 'runes';
+$tused = use_turns($args);
+
+global $runesgained, $uera;
+$runesgained = gamefactor($runesgained);
+if($tused > 1)
+	$turns = 'turns';
+elseif($tused == 1)
+	$turns = 'turn';
+return sprintf("~ You produced %s ".strtolower($uera[runes])." in %s ".$turns." ~", commas($runesgained), $tused);
+}
+
+function fn_land($args)
+{
+$args[type] = 'land';
+$tused = use_turns($args);
+
+global $landgained;
+if($tused > 1)
+	$turns = 'turns';
+elseif($tused == 1)
+	$turns = 'turn';
+return sprintf("~ You gained <u>%s acres</u> of land ~", commas($landgained),
+    $tused);
+}
+
+function fn_heal($args)
+{
+$message = '~ Your health increased a total of $gained% ~';
+global $users;
+
+$args[type] = 'heal';
+
+$oldhealth = $users[health];
+$output = use_turns($args);
+$message = str_replace('$gained', commas($users[health] - $oldhealth), $message);
+$message = str_replace('$turns', $output, $message);
+
+return $message;
+}
+
+function fn_ind($args)
+{
+$args[type] = 'industry';
+$tused = use_turns($args);
+if($tused > 1)
+	$turns = 'turns';
+elseif($tused == 1)
+	$turns = 'turn';
+return sprintf("~ You spent %s ".$turns." recruiting soldiers ~", $tused);
+}
+?>

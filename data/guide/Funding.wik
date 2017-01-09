@@ -1,0 +1,15 @@
+!Overview
+The bank is a place to store money when you have extra, or get a loan when you really need some cash. There are four separate functions.
+
+!Borrow
+Borrowing allows you to take out a loan when you need some cash. The maximum amount you can borrow depends on your networth. The higher your networth, the more money you can borrow. As noted with the confirmation message, you are required to pay back 0.5% of the loan per turn. This amount will begin to appear under the economic status reported in the output from spending turns.
+Some conciser it helpful to get a loan at the start, so you can better conserve your turns when building.
+
+!Repay
+Repaying allows you to repay a loan all at once, rather then having a certain portion deducted from your income each turn. Since loans accrue interest as you spend turns, it's best to pay off a loan as soon as possible to avoid paying the bank more then they gave you in the beginning.
+
+!Deposit
+You can deposit money into your savings account for safe storage. This also gains interest, but this time that money goes to you, since it's your money, not the bank's. However, the interest on savings is less then on a loan, so don't take a loan to put in your savings. You'll lose more then you'll gain. You will not be able use money in saveings for in day-to-day operations, and although the money in savings does count toward your networth, it does not carry the same value as cash on hand. Also note that proceeds from the sale of troops and goods on the market are deposited directly into your bank account.
+
+!Withdraw
+Withdrawal lets you get money back out of your savings account when you need it. 
