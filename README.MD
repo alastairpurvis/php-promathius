@@ -29,3 +29,19 @@ Basic structure
 ├── config.php
 │   └── essential database configuration
 ```
+
+Installation
+---------------
+* Setup PHP/MySQL server (PHP 4.5.1+)
+* Edit game/config.php to reflect your MySQL database
+* Upload database.sql to your server (delete the file once uploaded)
+
+Credits
+---------------
+phpBB2
+Smarty Template Engine
+eWiki
+
+License
+---------------
+The game is under GPL 3.0 license.
