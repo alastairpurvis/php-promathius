@@ -38,9 +38,9 @@ Installation
 
 Credits
 ---------------
-phpBB2
-Smarty Template Engine
-eWiki
+* phpBB2
+* Smarty Template Engine
+* eWiki
 
 License
 ---------------
