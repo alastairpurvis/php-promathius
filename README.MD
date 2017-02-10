@@ -5,7 +5,13 @@ Promathius is a turn-based strategy game built on PHP and MySQL. It leverages th
 
 The front-end display and rules of the game are separated from the backend game engine in an organized "data" folder. These files can be modified with minimal programming experience for customization and optimization. 
 
-Basic structure
+Installation
+---------------
+* Setup PHP/MySQL server (PHP 4.5.1+)
+* Edit game/config.php to reflect your MySQL database
+* Upload database.sql to your server (delete the file once uploaded)
+
+App Structure
 ---------------
 ```
 ├── data
@@ -29,12 +35,6 @@ Basic structure
 ├── config.php
 │   └── essential database configuration
 ```
-
-Installation
----------------
-* Setup PHP/MySQL server (PHP 4.5.1+)
-* Edit game/config.php to reflect your MySQL database
-* Upload database.sql to your server (delete the file once uploaded)
 
 Credits
 ---------------
